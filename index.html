@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Pastel Gallery (IndexedDB)</title>
+<title>My gallery</title>
 
 <style>
 :root{
@@ -41,7 +41,7 @@ h2{margin:0 0 10px;font-size:16px}
 
 .header{
   display:flex;align-items:flex-end;justify-content:space-between;
-  gap:12px;flex-wrap:wrap;margin-bottom:10px
+  gap:12px;flex-wrap:wrap;margin-bottom:12px
 }
 
 .tabs{display:flex;gap:8px}
@@ -111,7 +111,7 @@ button:disabled{opacity:.6;cursor:not-allowed}
 .status.ok{border-color:rgba(34,197,94,.35); background:rgba(34,197,94,.08)}
 .status.err{border-color:rgba(239,68,68,.35); background:rgba(239,68,68,.08)}
 
-/* Folder view cards */
+/* Folder cards */
 .foldersGrid{
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
@@ -160,7 +160,7 @@ button:disabled{opacity:.6;cursor:not-allowed}
   border-color: rgba(96,165,250,.95);
 }
 
-/* Gallery */
+/* Gallery inside folder view */
 .gallery{
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
@@ -205,6 +205,11 @@ button:disabled{opacity:.6;cursor:not-allowed}
   text-decoration:none;
 }
 .actions button{cursor:pointer}
+
+/* Top filters bar */
+.filtersCard{
+  margin-top:10px;
+}
 </style>
 </head>
 
@@ -213,8 +218,8 @@ button:disabled{opacity:.6;cursor:not-allowed}
 
   <header class="header">
     <div>
-      <h1>Pastel Gallery</h1>
-      <div class="muted small">IndexedDB • เก็บรูปเยอะขึ้นมาก • ทำงานบน GitHub Pages ได้</div>
+      <h1>My gallery</h1>
+      <div class="muted small">IndexedDB • เก็บรูปเยอะขึ้น • Search = โชว์โฟลเดอร์อย่างเดียว</div>
     </div>
 
     <div class="tabs">
@@ -223,55 +228,69 @@ button:disabled{opacity:.6;cursor:not-allowed}
     </div>
   </header>
 
-  <section class="card">
-    <h2>Status</h2>
-    <div id="statusBox" class="status">กำลังเริ่มระบบ...</div>
-    <div class="muted small" id="usageInfo">—</div>
-  </section>
-
-  <!-- Folder View -->
-  <section class="card" id="folderViewCard">
-    <div class="row" style="justify-content:space-between;align-items:center">
-      <h2 style="margin:0">Folders</h2>
-      <div class="row" style="margin:0">
-        <button class="secondary" id="btnShowAll">Show All</button>
-        <button class="danger" id="btnResetAll" title="ลบข้อมูลทั้งหมดในเครื่องนี้">Reset All</button>
+  <!-- Filters on TOP (always visible) -->
+  <section class="card filtersCard" id="filtersTop">
+    <h2>ค้นหา / ฟิลเตอร์</h2>
+    <div class="row">
+      <div class="field grow">
+        <label>Search folder name</label>
+        <input id="filterFolderName" placeholder="เช่น Trip, DC2, Running..." />
+      </div>
+      <div class="field grow">
+        <label>Tags (คั่นด้วย , )</label>
+        <input id="filterTags" placeholder="snow, family, invoice..." />
+      </div>
+      <div class="field">
+        <label>&nbsp;</label>
+        <button class="secondary" id="btnClearFilters">Clear</button>
       </div>
     </div>
-
-    <div id="foldersGrid" class="foldersGrid"></div>
-    <div id="foldersEmpty" class="muted">ยังไม่มีโฟลเดอร์ — ไปที่แท็บ Upload เพื่อสร้างโฟลเดอร์</div>
+    <div class="muted small" id="topFilterInfo">—</div>
   </section>
 
-  <!-- Search -->
+  <!-- SEARCH (Folders only) -->
   <section class="panel" id="panelSearch">
-    <div class="card">
-      <h2>ค้นหา / ฟิลเตอร์</h2>
-      <div class="row">
-        <div class="field">
-          <label>Folder</label>
-          <select id="searchFolder"></select>
-        </div>
-        <div class="field grow">
-          <label>Search (ชื่อไฟล์)</label>
-          <input id="searchText" placeholder="เช่น trip, dc2, run..." />
-        </div>
-        <div class="field grow">
-          <label>Tags (คั่นด้วย , )</label>
-          <input id="searchTags" placeholder="hokkaido, snow, dc2" />
-        </div>
-        <div class="field">
-          <label>&nbsp;</label>
-          <button class="secondary" id="btnClearSearch">Clear</button>
+    <!-- Folder List -->
+    <section class="card" id="folderListCard">
+      <div class="row" style="justify-content:space-between;align-items:center">
+        <h2 style="margin:0">Folders</h2>
+        <div class="row" style="margin:0">
+          <button class="secondary" id="btnResetAll" title="ลบข้อมูลทั้งหมดในเครื่องนี้">Reset All</button>
         </div>
       </div>
-      <div class="muted small" id="resultInfo">—</div>
-    </div>
+      <div id="foldersGrid" class="foldersGrid"></div>
+      <div id="foldersEmpty" class="muted">ยังไม่มีโฟลเดอร์ — ไปที่แท็บ Upload เพื่อสร้างโฟลเดอร์</div>
+    </section>
+
+    <!-- Folder View (when click a folder) -->
+    <section class="card hidden" id="folderViewCard">
+      <div class="row" style="justify-content:space-between;align-items:center">
+        <div>
+          <h2 style="margin:0" id="currentFolderTitle">Folder</h2>
+          <div class="muted small" id="currentFolderInfo">—</div>
+        </div>
+        <div class="row" style="margin:0">
+          <button class="secondary" id="btnBackToFolders">Back</button>
+          <button class="danger" id="btnDeleteFolder">Delete folder</button>
+        </div>
+      </div>
+
+      <div id="folderGallery" class="gallery"></div>
+      <div id="folderGalleryEmpty" class="muted">โฟลเดอร์นี้ยังไม่มีรูป</div>
+    </section>
   </section>
 
-  <!-- Upload -->
+  <!-- UPLOAD -->
   <section class="panel hidden" id="panelUpload">
-    <div class="card">
+
+    <!-- Status ONLY in Upload tab -->
+    <section class="card">
+      <h2>Status</h2>
+      <div id="statusBox" class="status">กำลังเริ่มระบบ...</div>
+      <div class="muted small" id="usageInfo">—</div>
+    </section>
+
+    <section class="card">
       <h2>สร้างโฟลเดอร์</h2>
       <div class="row">
         <div class="field grow">
@@ -284,9 +303,9 @@ button:disabled{opacity:.6;cursor:not-allowed}
         </div>
       </div>
       <div class="muted small">* Default ลบไม่ได้</div>
-    </div>
+    </section>
 
-    <div class="card">
+    <section class="card">
       <h2>อัปโหลดรูป</h2>
       <div class="row">
         <div class="field">
@@ -310,37 +329,27 @@ button:disabled{opacity:.6;cursor:not-allowed}
       </div>
 
       <div class="muted small" id="uploadMsg">—</div>
-    </div>
-  </section>
-
-  <!-- Gallery -->
-  <section class="card">
-    <h2>Gallery</h2>
-    <div id="gallery" class="gallery"></div>
-    <div id="emptyState" class="muted">ยังไม่มีรูป — ไปที่แท็บ Upload เพื่อเพิ่มรูป</div>
+    </section>
   </section>
 
 </div>
 
 <script>
 /* =========================================================
-   IndexedDB Data Model
-   - DB: gallery_db_v1
-   - stores:
-     1) folders: { name (key) }
-     2) images: { id (key), folder, name, tags[], createdAt, blob }
-     Indexes: images.by_folder, images.by_createdAt
+   IndexedDB Model
 ========================================================= */
-const DB_NAME = "gallery_db_v1";
+const DB_NAME = "my_gallery_db_v1";
 const DB_VERSION = 1;
 
 const STORE_FOLDERS = "folders";
-const STORE_IMAGES = "images";
+const STORE_IMAGES  = "images";
 
 const $ = (id) => document.getElementById(id);
 
 function setStatus(msg, type="") {
+  // status exists only on upload tab; guard
   const box = $("statusBox");
+  if (!box) return;
   box.className = "status" + (type ? " " + type : "");
   box.textContent = msg;
   console.log("[STATUS]", msg);
@@ -368,6 +377,7 @@ function sanitizeFolderName(name) {
 }
 
 let db;
+let currentFolder = null;
 
 /* -------------------------
    IndexedDB helpers
@@ -439,8 +449,6 @@ function idbClear(store) {
     r.onerror = () => reject(r.error);
   });
 }
-
-/* get images by folder index */
 function idbGetAllByIndex(index, key) {
   return new Promise((resolve, reject) => {
     const r = index.getAll(key);
@@ -449,44 +457,11 @@ function idbGetAllByIndex(index, key) {
   });
 }
 
-/* delete all images in a folder */
-async function deleteImagesInFolder(folder) {
-  const t = tx([STORE_IMAGES], "readwrite");
-  const store = t.objectStore(STORE_IMAGES);
-  const idx = store.index("by_folder");
-  const images = await idbGetAllByIndex(idx, folder);
-  for (const img of images) await idbDel(store, img.id);
-  await new Promise((res, rej) => { t.oncomplete=res; t.onerror=()=>rej(t.error); });
-}
-
-/* count images per folder + latest cover */
-async function getFolderStats() {
-  const folders = await listFolders();
-  const stats = {};
-  for (const f of folders) stats[f] = { count: 0, coverId: null, coverCreatedAt: 0 };
-
-  // scan all images once (ok for moderate size; can optimize later)
-  const t = tx([STORE_IMAGES], "readonly");
-  const store = t.objectStore(STORE_IMAGES);
-  const all = await idbGetAll(store);
-
-  for (const img of all) {
-    if (!stats[img.folder]) stats[img.folder] = { count: 0, coverId: null, coverCreatedAt: 0 };
-    stats[img.folder].count++;
-    if ((img.createdAt||0) > (stats[img.folder].coverCreatedAt||0)) {
-      stats[img.folder].coverCreatedAt = img.createdAt||0;
-      stats[img.folder].coverId = img.id;
-    }
-  }
-  return stats;
-}
-
 async function listFolders() {
   const t = tx([STORE_FOLDERS], "readonly");
   const store = t.objectStore(STORE_FOLDERS);
   const all = await idbGetAll(store);
-  const names = all.map(x => x.name).sort((a,b)=>a.localeCompare(b));
-  return names;
+  return all.map(x => x.name).sort((a,b)=>a.localeCompare(b));
 }
 
 async function ensureDefaultFolder() {
@@ -497,9 +472,36 @@ async function ensureDefaultFolder() {
   await new Promise((res, rej) => { t.oncomplete=res; t.onerror=()=>rej(t.error); });
 }
 
-/* -------------------------
-   Tabs
-------------------------- */
+async function deleteImagesInFolder(folder) {
+  const t = tx([STORE_IMAGES], "readwrite");
+  const store = t.objectStore(STORE_IMAGES);
+  const idx = store.index("by_folder");
+  const images = await idbGetAllByIndex(idx, folder);
+  for (const img of images) await idbDel(store, img.id);
+  await new Promise((res, rej) => { t.oncomplete=res; t.onerror=()=>rej(t.error); });
+}
+
+async function getFolderStats() {
+  const folders = await listFolders();
+  const stats = {};
+  for (const f of folders) stats[f] = { count: 0, coverId: null, coverCreatedAt: 0, tagSet: new Set() };
+
+  const t = tx([STORE_IMAGES], "readonly");
+  const store = t.objectStore(STORE_IMAGES);
+  const all = await idbGetAll(store);
+
+  for (const img of all) {
+    if (!stats[img.folder]) stats[img.folder] = { count: 0, coverId: null, coverCreatedAt: 0, tagSet: new Set() };
+    stats[img.folder].count++;
+    (img.tags || []).forEach(tag => stats[img.folder].tagSet.add(String(tag).toLowerCase()));
+    if ((img.createdAt||0) > (stats[img.folder].coverCreatedAt||0)) {
+      stats[img.folder].coverCreatedAt = img.createdAt||0;
+      stats[img.folder].coverId = img.id;
+    }
+  }
+  return stats;
+}
+
 function setActiveTab(tab) {
   const isSearch = tab === "search";
   $("tabSearch").classList.toggle("active", isSearch);
@@ -511,60 +513,52 @@ $("tabSearch").addEventListener("click", () => setActiveTab("search"));
 $("tabUpload").addEventListener("click", () => setActiveTab("upload"));
 
 /* -------------------------
-   UI: fill selects
+   Top filters (folders only)
 ------------------------- */
-async function refillFolderSelects() {
-  const folders = await listFolders();
-
-  const up = $("uploadFolder");
-  up.innerHTML = "";
-  folders.forEach(f => {
-    const o=document.createElement("option");
-    o.value=f; o.textContent=f;
-    up.appendChild(o);
-  });
-  if (!up.value && folders.length) up.value = folders[0];
-
-  const sf = $("searchFolder");
-  const current = sf.value;
-  sf.innerHTML = "";
-  const allOpt = document.createElement("option");
-  allOpt.value="__ALL__";
-  allOpt.textContent="All folders";
-  sf.appendChild(allOpt);
-
-  folders.forEach(f => {
-    const o=document.createElement("option");
-    o.value=f; o.textContent=f;
-    sf.appendChild(o);
-  });
-
-  if ([...sf.options].some(o=>o.value===current)) sf.value=current;
-  else sf.value="__ALL__";
+function folderMatchesFilters(folderName, stats, qName, qTags) {
+  if (qName) {
+    if (!folderName.toLowerCase().includes(qName)) return false;
+  }
+  if (qTags.length) {
+    const tagSet = stats?.tagSet || new Set();
+    for (const t of qTags) {
+      if (!tagSet.has(t)) return false;
+    }
+  }
+  return true;
 }
 
 /* -------------------------
-   Render folders with cover preview
+   Render folder list only (Search main)
 ------------------------- */
 async function blobToObjectURL(blob) {
   return URL.createObjectURL(blob);
 }
 
-async function renderFolders() {
+async function renderFolderList() {
   const grid = $("foldersGrid");
   const empty = $("foldersEmpty");
   grid.innerHTML = "";
 
+  const qName = ($("filterFolderName").value || "").trim().toLowerCase();
+  const qTags = normalizeTags($("filterTags").value);
+
   const folders = await listFolders();
   if (!folders.length) {
     empty.style.display = "block";
+    $("topFilterInfo").textContent = "—";
     return;
   }
   empty.style.display = "none";
 
   const stats = await getFolderStats();
+  const filtered = folders.filter(f => folderMatchesFilters(f, stats[f], qName, qTags));
 
-  for (const f of folders) {
+  $("topFilterInfo").textContent =
+    `Folders: ${filtered.length} / ${folders.length}` +
+    (qTags.length ? ` • tag filter: ${qTags.join(", ")}` : "");
+
+  for (const f of filtered) {
     const count = stats[f]?.count ?? 0;
     const coverId = stats[f]?.coverId ?? null;
 
@@ -613,19 +607,7 @@ async function renderFolders() {
     badge.className = "folderCount";
     badge.textContent = `${count}`;
 
-    const del = document.createElement("button");
-    del.className = "danger";
-    del.style.padding = "8px 10px";
-    del.style.borderRadius = "12px";
-    del.style.fontSize = "12px";
-    del.textContent = "Delete";
-    del.addEventListener("click", (e) => {
-      e.stopPropagation();
-      deleteFolder(f);
-    });
-
     right.appendChild(badge);
-    right.appendChild(del);
 
     meta.appendChild(name);
     meta.appendChild(right);
@@ -634,12 +616,7 @@ async function renderFolders() {
     card.appendChild(meta);
 
     card.addEventListener("click", async () => {
-      $("searchFolder").value = f;
-      $("searchText").value = "";
-      $("searchTags").value = "";
-      setActiveTab("search");
-      await renderGallery();
-      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+      await openFolderView(f);
     });
 
     grid.appendChild(card);
@@ -647,176 +624,70 @@ async function renderFolders() {
 }
 
 /* -------------------------
-   Folder create / delete
+   Folder View (inside Search tab)
 ------------------------- */
-$("btnCreateFolder").addEventListener("click", async () => {
-  try {
-    const name = sanitizeFolderName($("newFolderName").value);
-    if (!name) return setStatus("กรุณาใส่ชื่อโฟลเดอร์", "err");
+async function openFolderView(folderName) {
+  currentFolder = folderName;
 
-    const folders = await listFolders();
-    if (folders.includes(name)) return setStatus("มีโฟลเดอร์นี้อยู่แล้ว", "err");
+  $("folderListCard").classList.add("hidden");
+  $("folderViewCard").classList.remove("hidden");
 
-    const t = tx([STORE_FOLDERS], "readwrite");
-    const store = t.objectStore(STORE_FOLDERS);
-    await idbPut(store, { name });
+  $("currentFolderTitle").textContent = `Folder: ${folderName}`;
+  await renderFolderGallery(folderName);
+}
 
-    await new Promise((res, rej) => { t.oncomplete=res; t.onerror=()=>rej(t.error); });
-
-    $("newFolderName").value = "";
-    await refillFolderSelects();
-    await renderFolders();
-    setStatus(`สร้างโฟลเดอร์สำเร็จ: ${name}`, "ok");
-    setActiveTab("upload");
-    $("uploadFolder").value = name;
-  } catch (e) {
-    setStatus(`สร้างโฟลเดอร์ไม่สำเร็จ: ${e?.message || e}`, "err");
-  }
+$("btnBackToFolders").addEventListener("click", async () => {
+  currentFolder = null;
+  $("folderViewCard").classList.add("hidden");
+  $("folderListCard").classList.remove("hidden");
+  await renderFolderList();
 });
 
-async function deleteFolder(folder) {
-  if (folder === "Default") {
+$("btnDeleteFolder").addEventListener("click", async () => {
+  if (!currentFolder) return;
+  if (currentFolder === "Default") {
     alert('ไม่อนุญาตให้ลบโฟลเดอร์ "Default"');
     return;
   }
-  if (!confirm(`ลบโฟลเดอร์ "${folder}" และรูปทั้งหมดในโฟลเดอร์นี้?`)) return;
+  if (!confirm(`ลบโฟลเดอร์ "${currentFolder}" และรูปทั้งหมดในโฟลเดอร์นี้?`)) return;
 
   try {
-    await deleteImagesInFolder(folder);
-
+    await deleteImagesInFolder(currentFolder);
     const t = tx([STORE_FOLDERS], "readwrite");
     const store = t.objectStore(STORE_FOLDERS);
-    await idbDel(store, folder);
+    await idbDel(store, currentFolder);
     await new Promise((res, rej) => { t.oncomplete=res; t.onerror=()=>rej(t.error); });
 
-    await refillFolderSelects();
-    await renderFolders();
-    await renderGallery();
-    setStatus(`ลบโฟลเดอร์ "${folder}" แล้ว`, "ok");
+    currentFolder = null;
+    $("folderViewCard").classList.add("hidden");
+    $("folderListCard").classList.remove("hidden");
+    await refillUploadFolderSelect();
+    await renderFolderList();
   } catch (e) {
-    setStatus(`ลบโฟลเดอร์ไม่สำเร็จ: ${e?.message || e}`, "err");
-  }
-}
-
-/* -------------------------
-   Upload images to IndexedDB
-   - store as Blob to save space
-------------------------- */
-async function uploadFiles(files) {
-  try {
-    const folder = $("uploadFolder").value || "Default";
-    const tagList = normalizeTags($("uploadTags").value);
-
-    const arr = [...files].filter(f => f && f.type && f.type.startsWith("image/"));
-    if (!arr.length) return setStatus("ไม่พบไฟล์รูปภาพ", "err");
-
-    $("uploadMsg").textContent = `กำลังอัปโหลด ${arr.length} ไฟล์...`;
-    setStatus(`กำลังอัปโหลด ${arr.length} ไฟล์...`);
-
-    // Ensure folder exists
-    const ft = tx([STORE_FOLDERS], "readwrite");
-    const fstore = ft.objectStore(STORE_FOLDERS);
-    const fexists = await idbGet(fstore, folder);
-    if (!fexists) await idbPut(fstore, { name: folder });
-    await new Promise((res, rej) => { ft.oncomplete=res; ft.onerror=()=>rej(ft.error); });
-
-    // Add images
-    const t = tx([STORE_IMAGES], "readwrite");
-    const store = t.objectStore(STORE_IMAGES);
-
-    for (const file of arr) {
-      const record = {
-        id: uid(),
-        folder,
-        name: file.name || "image",
-        tags: tagList,
-        createdAt: Date.now(),
-        blob: file // store original blob (efficient)
-      };
-      await idbAdd(store, record);
-    }
-
-    await new Promise((res, rej) => { t.oncomplete=res; t.onerror=()=>rej(t.error); });
-
-    $("uploadMsg").textContent = `อัปโหลดสำเร็จ: ${arr.length} ไฟล์ → ${folder}`;
-    setStatus(`อัปโหลดสำเร็จ: ${arr.length} ไฟล์ → ${folder}`, "ok");
-
-    await refillFolderSelects();
-    await renderFolders();
-    await renderGallery();
-  } catch (e) {
-    setStatus(`อัปโหลดไม่สำเร็จ: ${e?.message || e}`, "err");
-    $("uploadMsg").textContent = `อัปโหลดไม่สำเร็จ: ${e?.message || e}`;
-  }
-}
-
-/* Choose file */
-$("btnChoose").addEventListener("click", () => {
-  const fi = $("fileInput");
-  fi.value = "";
-  fi.click();
-});
-$("fileInput").addEventListener("change", (e) => {
-  if (e.target.files && e.target.files.length) uploadFiles(e.target.files);
-});
-
-/* Drag & Drop (desktop) */
-const dz = $("dropzone");
-dz.addEventListener("dragover", (e) => { e.preventDefault(); dz.classList.add("drag"); });
-dz.addEventListener("dragleave", () => dz.classList.remove("drag"));
-dz.addEventListener("drop", (e) => {
-  e.preventDefault();
-  dz.classList.remove("drag");
-  if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) {
-    uploadFiles(e.dataTransfer.files);
+    alert(`ลบโฟลเดอร์ไม่สำเร็จ: ${e?.message || e}`);
   }
 });
 
-/* -------------------------
-   Search + Gallery + delete image
-------------------------- */
-function matchAllTags(imgTags, wantTags) {
-  const set = new Set((imgTags || []).map(t => String(t).toLowerCase()));
-  for (const t of wantTags) if (!set.has(t)) return false;
-  return true;
-}
-
-async function getAllImages() {
-  const t = tx([STORE_IMAGES], "readonly");
-  const store = t.objectStore(STORE_IMAGES);
-  const all = await idbGetAll(store);
-  all.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
-  return all;
-}
-
-async function renderGallery() {
-  const gallery = $("gallery");
-  const empty = $("emptyState");
-  const info = $("resultInfo");
-
+async function renderFolderGallery(folderName) {
+  const gallery = $("folderGallery");
+  const empty = $("folderGalleryEmpty");
   gallery.innerHTML = "";
 
-  const folder = $("searchFolder").value;
-  const text = ($("searchText").value || "").trim().toLowerCase();
-  const wantTags = normalizeTags($("searchTags").value);
+  const t = tx([STORE_IMAGES], "readonly");
+  const store = t.objectStore(STORE_IMAGES);
+  const idx = store.index("by_folder");
+  const images = await idbGetAllByIndex(idx, folderName);
+  images.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
 
-  const all = await getAllImages();
-  const filtered = all.filter(img => {
-    if (folder !== "__ALL__" && img.folder !== folder) return false;
-    if (text && !(img.name || "").toLowerCase().includes(text)) return false;
-    if (wantTags.length && !matchAllTags(img.tags, wantTags)) return false;
-    return true;
-  });
+  $("currentFolderInfo").textContent = `${images.length} images`;
 
-  if (!filtered.length) {
+  if (!images.length) {
     empty.style.display = "block";
-    info.textContent = all.length ? "ไม่พบรูปตามเงื่อนไข" : "—";
     return;
   }
   empty.style.display = "none";
-  info.textContent = `แสดง ${filtered.length} จากทั้งหมด ${all.length} รูป`;
 
-  for (const img of filtered) {
+  for (const img of images) {
     const card = document.createElement("div");
     card.className = "thumb";
 
@@ -840,31 +711,23 @@ async function renderGallery() {
 
     const badge = document.createElement("div");
     badge.className = "badge";
-    badge.textContent = img.folder;
+    badge.textContent = folderName;
 
     top.appendChild(name);
     top.appendChild(badge);
 
     const tagsWrap = document.createElement("div");
     tagsWrap.className = "tags";
-    (img.tags || []).forEach(t => {
+    (img.tags || []).forEach(tg => {
       const tag = document.createElement("span");
       tag.className = "tag";
-      tag.textContent = t;
-      tag.addEventListener("click", async () => {
-        const current = new Set(normalizeTags($("searchTags").value));
-        current.add(String(t).toLowerCase());
-        $("searchTags").value = Array.from(current).join(", ");
-        setActiveTab("search");
-        await renderGallery();
-      });
+      tag.textContent = tg;
       tagsWrap.appendChild(tag);
     });
 
     const actions = document.createElement("div");
     actions.className = "actions";
 
-    // Download: create blob URL at click time
     const dl = document.createElement("a");
     dl.href = "#";
     dl.textContent = "Download";
@@ -889,11 +752,11 @@ async function renderGallery() {
         const store = t.objectStore(STORE_IMAGES);
         await idbDel(store, img.id);
         await new Promise((res, rej) => { t.oncomplete=res; t.onerror=()=>rej(t.error); });
-        setStatus("ลบรูปแล้ว", "ok");
-        await renderFolders();
-        await renderGallery();
+
+        await renderFolderGallery(folderName);
+        // refresh folder list counts/cover in background
       } catch (e) {
-        setStatus(`ลบรูปไม่สำเร็จ: ${e?.message || e}`, "err");
+        alert(`ลบรูปไม่สำเร็จ: ${e?.message || e}`);
       }
     });
 
@@ -910,29 +773,119 @@ async function renderGallery() {
   }
 }
 
-/* Search events */
-$("searchFolder").addEventListener("change", renderGallery);
-$("searchText").addEventListener("input", renderGallery);
-$("searchTags").addEventListener("input", renderGallery);
+/* -------------------------
+   Upload tab: folders select + create/upload
+------------------------- */
+async function refillUploadFolderSelect() {
+  const folders = await listFolders();
+  const up = $("uploadFolder");
+  up.innerHTML = "";
+  folders.forEach(f => {
+    const o=document.createElement("option");
+    o.value=f; o.textContent=f;
+    up.appendChild(o);
+  });
+  if (!up.value && folders.length) up.value = folders[0];
+}
 
-$("btnClearSearch").addEventListener("click", async () => {
-  $("searchFolder").value="__ALL__";
-  $("searchText").value="";
-  $("searchTags").value="";
-  await renderGallery();
-  setStatus("ล้างฟิลเตอร์แล้ว", "ok");
+$("btnCreateFolder").addEventListener("click", async () => {
+  try {
+    const name = sanitizeFolderName($("newFolderName").value);
+    if (!name) return setStatus("กรุณาใส่ชื่อโฟลเดอร์", "err");
+
+    const folders = await listFolders();
+    if (folders.includes(name)) return setStatus("มีโฟลเดอร์นี้อยู่แล้ว", "err");
+
+    const t = tx([STORE_FOLDERS], "readwrite");
+    const store = t.objectStore(STORE_FOLDERS);
+    await idbPut(store, { name });
+
+    await new Promise((res, rej) => { t.oncomplete=res; t.onerror=()=>rej(t.error); });
+
+    $("newFolderName").value = "";
+    await refillUploadFolderSelect();
+    await renderFolderList();
+    await updateUsageInfo();
+
+    $("uploadFolder").value = name;
+    setStatus(`สร้างโฟลเดอร์สำเร็จ: ${name}`, "ok");
+  } catch (e) {
+    setStatus(`สร้างโฟลเดอร์ไม่สำเร็จ: ${e?.message || e}`, "err");
+  }
 });
 
-$("btnShowAll").addEventListener("click", async () => {
-  $("searchFolder").value="__ALL__";
-  $("searchText").value="";
-  $("searchTags").value="";
-  setActiveTab("search");
-  await renderGallery();
-  setStatus("แสดงรูปทั้งหมดแล้ว", "ok");
+async function uploadFiles(files) {
+  try {
+    const folder = $("uploadFolder").value || "Default";
+    const tagList = normalizeTags($("uploadTags").value);
+
+    const arr = [...files].filter(f => f && f.type && f.type.startsWith("image/"));
+    if (!arr.length) return setStatus("ไม่พบไฟล์รูปภาพ", "err");
+
+    $("uploadMsg").textContent = `กำลังอัปโหลด ${arr.length} ไฟล์...`;
+    setStatus(`กำลังอัปโหลด ${arr.length} ไฟล์...`);
+
+    // ensure folder exists
+    const ft = tx([STORE_FOLDERS], "readwrite");
+    const fstore = ft.objectStore(STORE_FOLDERS);
+    const exists = await idbGet(fstore, folder);
+    if (!exists) await idbPut(fstore, { name: folder });
+    await new Promise((res, rej) => { ft.oncomplete=res; ft.onerror=()=>rej(ft.error); });
+
+    // add images
+    const t = tx([STORE_IMAGES], "readwrite");
+    const store = t.objectStore(STORE_IMAGES);
+
+    for (const file of arr) {
+      await idbAdd(store, {
+        id: uid(),
+        folder,
+        name: file.name || "image",
+        tags: tagList,
+        createdAt: Date.now(),
+        blob: file
+      });
+    }
+
+    await new Promise((res, rej) => { t.oncomplete=res; t.onerror=()=>rej(t.error); });
+
+    $("uploadMsg").textContent = `อัปโหลดสำเร็จ: ${arr.length} ไฟล์ → ${folder}`;
+    setStatus(`อัปโหลดสำเร็จ: ${arr.length} ไฟล์ → ${folder}`, "ok");
+
+    await renderFolderList();
+    await updateUsageInfo();
+
+    // If currently viewing this folder, refresh it
+    if (currentFolder === folder) await renderFolderGallery(folder);
+  } catch (e) {
+    setStatus(`อัปโหลดไม่สำเร็จ: ${e?.message || e}`, "err");
+    $("uploadMsg").textContent = `อัปโหลดไม่สำเร็จ: ${e?.message || e}`;
+  }
+}
+
+/* Choose file */
+$("btnChoose").addEventListener("click", () => {
+  const fi = $("fileInput");
+  fi.value = "";
+  fi.click();
+});
+$("fileInput").addEventListener("change", (e) => {
+  if (e.target.files && e.target.files.length) uploadFiles(e.target.files);
 });
 
-/* Reset all */
+/* Drag & Drop */
+const dz = $("dropzone");
+dz.addEventListener("dragover", (e) => { e.preventDefault(); dz.classList.add("drag"); });
+dz.addEventListener("dragleave", () => dz.classList.remove("drag"));
+dz.addEventListener("drop", (e) => {
+  e.preventDefault();
+  dz.classList.remove("drag");
+  if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) {
+    uploadFiles(e.dataTransfer.files);
+  }
+});
+
+/* Reset All */
 $("btnResetAll").addEventListener("click", async () => {
   if (!confirm("ลบข้อมูลทั้งหมด (โฟลเดอร์+รูป) ในเครื่องนี้?")) return;
   try {
@@ -942,38 +895,59 @@ $("btnResetAll").addEventListener("click", async () => {
     await new Promise((res, rej) => { t.oncomplete=res; t.onerror=()=>rej(t.error); });
 
     await ensureDefaultFolder();
-    await refillFolderSelects();
-    await renderFolders();
-    await renderGallery();
+    await refillUploadFolderSelect();
+
+    // back to folder list
+    currentFolder = null;
+    $("folderViewCard").classList.add("hidden");
+    $("folderListCard").classList.remove("hidden");
+
+    await renderFolderList();
+    await updateUsageInfo();
+
     setStatus("รีเซ็ตเรียบร้อย", "ok");
   } catch (e) {
     setStatus(`รีเซ็ตไม่สำเร็จ: ${e?.message || e}`, "err");
   }
 });
 
-/* Usage info */
+/* Top filters events */
+$("filterFolderName").addEventListener("input", async () => {
+  if (!currentFolder) await renderFolderList();
+});
+$("filterTags").addEventListener("input", async () => {
+  if (!currentFolder) await renderFolderList();
+});
+$("btnClearFilters").addEventListener("click", async () => {
+  $("filterFolderName").value = "";
+  $("filterTags").value = "";
+  if (!currentFolder) await renderFolderList();
+});
+
+/* Usage info (Upload tab) */
 async function updateUsageInfo() {
-  // basic counts only (fast)
   const folders = await listFolders();
   const stats = await getFolderStats();
   const total = Object.values(stats).reduce((s,x)=>s+(x.count||0),0);
-  $("usageInfo").textContent = `Folders: ${folders.length} • Images: ${total} • Storage: IndexedDB`;
+  const el = $("usageInfo");
+  if (el) el.textContent = `Folders: ${folders.length} • Images: ${total} • Storage: IndexedDB`;
 }
 
 /* Init */
 (async function init(){
   try {
+    setActiveTab("search"); // default
     setStatus("กำลังเปิดฐานข้อมูล IndexedDB...");
     db = await openDB();
     await ensureDefaultFolder();
-    await refillFolderSelects();
-    await renderFolders();
-    await renderGallery();
+    await refillUploadFolderSelect();
+    await renderFolderList();
     await updateUsageInfo();
-    setActiveTab("search");
     setStatus("พร้อมใช้งาน ✅ (IndexedDB)", "ok");
   } catch (e) {
-    setStatus(`เริ่มระบบไม่สำเร็จ: ${e?.message || e}\nลองเปิดผ่าน https:// (GitHub Pages) ไม่ใช่ file://`, "err");
+    // status may not be visible on search; switch to upload to show error
+    setActiveTab("upload");
+    setStatus(`เริ่มระบบไม่สำเร็จ: ${e?.message || e}\nแนะนำเปิดผ่าน https:// (GitHub Pages) ไม่ใช่ file://`, "err");
   }
 })();
 </script>
