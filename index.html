@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>Image Gallery</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+  <h1>📁 Image Gallery</h1>
+
+  <!-- Create folder -->
+  <div class="card">
+    <h2>1) สร้างโฟลเดอร์</h2>
+    <input id="folderName" placeholder="ชื่อโฟลเดอร์">
+    <button onclick="createFolder()">Create</button>
+  </div>
+
+  <!-- Upload -->
+  <div class="card">
+    <h2>2) อัปโหลดรูป</h2>
+    <select id="uploadFolder"></select>
+    <input type="file" multiple accept="image/*" onchange="uploadImages(event)">
+  </div>
+
+  <!-- Filter -->
+  <div class="card">
+    <h2>3) เลือกโฟลเดอร์</h2>
+    <select id="filterFolder" onchange="renderGallery()"></select>
+    <button onclick="downloadAll()">Download All (ZIP)</button>
+  </div>
+
+  <!-- Gallery -->
+  <div class="gallery" id="gallery"></div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
