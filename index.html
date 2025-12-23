@@ -1,120 +1,259 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Gallery</title>
-  <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8">
+<title>My Gallery</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+:root{
+  --bg:#0b1220;--card:#111a2e;--text:#e8eefc;--muted:#a9b4d0;
+  --line:rgba(255,255,255,.08);--btn:#2d6cdf;--btn2:#24314f;--danger:#b42318;
+  --radius:16px;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;font-family:system-ui;
+  background:radial-gradient(900px 500px at 20% 10%,rgba(45,108,223,.3),transparent),
+             radial-gradient(800px 500px at 80% 20%,rgba(125,45,223,.25),transparent),
+             var(--bg);
+  color:var(--text);
+}
+.container{max-width:1100px;margin:24px auto;padding:0 16px}
+h1{margin:0}
+.muted{color:var(--muted)} .small{font-size:12px}
+
+.header{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.tabs{display:flex;gap:8px}
+.tab{padding:10px 16px;border-radius:999px;border:1px solid var(--line);
+background:#111a2e;color:white;font-weight:700;cursor:pointer}
+.tab.active{background:var(--btn);border:none}
+
+.card{background:rgba(17,26,46,.9);border:1px solid var(--line);
+border-radius:var(--radius);padding:16px;margin:14px 0}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:end}
+.field{display:flex;flex-direction:column;gap:6px;min-width:220px}
+.field.grow{flex:1}
+
+input,select{padding:10px 12px;border-radius:12px;border:1px solid var(--line);
+background:#0f1830;color:white}
+button{padding:10px 14px;border-radius:12px;border:none;
+background:var(--btn);color:white;font-weight:700;cursor:pointer}
+button.secondary{background:var(--btn2);border:1px solid var(--line)}
+button.danger{background:var(--danger)}
+
+.panel.hidden{display:none}
+
+.dropzone{
+  border:2px dashed rgba(255,255,255,.18);border-radius:16px;padding:20px;
+  text-align:center;margin-top:12px
+}
+.dropzone.drag{border-color:#7c3aed}
+
+.foldersGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.folderCard{background:#0f1830;border:1px solid var(--line);border-radius:14px;
+overflow:hidden;cursor:pointer}
+.folderThumb{height:140px;display:flex;align-items:center;justify-content:center}
+.folderThumb img{width:100%;height:100%;object-fit:cover}
+.folderMeta{padding:12px;display:flex;justify-content:space-between;gap:8px}
+.folderCount{font-size:12px;color:var(--muted)}
+
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+gap:12px;margin-top:12px}
+.thumb{background:#0f1830;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.thumb img{width:100%;height:160px;object-fit:cover}
+.meta{padding:10px;display:flex;flex-direction:column;gap:8px}
+.tags{display:flex;gap:6px;flex-wrap:wrap}
+.tag{font-size:11px;padding:3px 8px;border-radius:999px;border:1px solid var(--line)}
+.actions a{background:var(--btn2);border:1px solid var(--line);color:white;
+text-decoration:none;text-align:center;padding:8px;border-radius:10px;font-size:12px}
+</style>
 </head>
+
 <body>
-  <div class="container">
-    <header class="header">
-      <div>
-        <h1>📸 My Gallery</h1>
-        <div class="muted">GitHub Pages • LocalStorage • Folder + Drag&Drop + Search/Tag</div>
-      </div>
+<div class="container">
 
-      <div class="tabs">
-        <button class="tab active" id="tabSearch" type="button">Search</button>
-        <button class="tab" id="tabUpload" type="button">Upload</button>
-      </div>
-    </header>
-
-    <!-- SEARCH TAB -->
-    <section class="panel" id="panelSearch">
-      <div class="card">
-        <h2>ค้นหา / ฟิลเตอร์</h2>
-
-        <div class="row">
-          <div class="field">
-            <label>โฟลเดอร์</label>
-            <select id="searchFolder"></select>
-          </div>
-
-          <div class="field grow">
-            <label>Search (ชื่อไฟล์)</label>
-            <input id="searchText" placeholder="พิมพ์คำค้น เช่น trip, dc2, run..." />
-          </div>
-
-          <div class="field grow">
-            <label>Tag (คั่นด้วย , )</label>
-            <input id="searchTags" placeholder="เช่น hokkaido, snow, dc2" />
-          </div>
-
-          <div class="field">
-            <label>&nbsp;</label>
-            <button id="btnClearSearch" class="secondary" type="button">Clear</button>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="muted small" id="resultInfo">—</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- UPLOAD TAB -->
-    <section class="panel hidden" id="panelUpload">
-      <div class="card">
-        <h2>1) สร้างโฟลเดอร์</h2>
-        <div class="row">
-          <input id="newFolderName" placeholder="เช่น Trip-Hokkaido / DC2 / Running" />
-          <button id="btnCreateFolder" type="button">Create</button>
-          <div class="muted small" id="createMsg"></div>
-        </div>
-      </div>
-
-      <div class="card">
-        <h2>2) เลือกโฟลเดอร์ + ใส่ Tag + อัปโหลด</h2>
-
-        <div class="row">
-          <div class="field">
-            <label>Upload folder</label>
-            <select id="uploadFolder"></select>
-          </div>
-
-          <div class="field grow">
-            <label>Tags (ใช้กับรูปที่อัปโหลดรอบนี้)</label>
-            <input id="uploadTags" placeholder="เช่น invoice, snow, family (คั่นด้วย , )" />
-          </div>
-
-          <div class="field">
-            <label>&nbsp;</label>
-            <button id="btnPickFiles" class="secondary" type="button">Choose files</button>
-            <input id="fileInput" type="file" accept="image/*" multiple hidden />
-          </div>
-        </div>
-
-        <div id="dropzone" class="dropzone" aria-label="Dropzone">
-          <div class="dzTitle">ลากไฟล์รูปมาวางที่นี่ (Drag & Drop)</div>
-          <div class="muted small">รองรับ png / jpg / webp / gif • เก็บใน LocalStorage</div>
-        </div>
-
-        <div class="row">
-          <div class="muted small" id="uploadMsg">—</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- GALLERY (Shared) -->
-    <section class="card">
-      <div class="galleryHeader">
-        <h2>Gallery</h2>
-        <div class="galleryActions">
-          <button id="btnShowAll" class="secondary" type="button">Show All</button>
-          <button id="btnResetDemo" class="danger" type="button" title="ลบข้อมูลทั้งหมดในเครื่องนี้">Reset (Clear All)</button>
-        </div>
-      </div>
-
-      <div id="gallery" class="gallery"></div>
-      <div id="emptyState" class="muted">ยังไม่มีรูป — ไปที่แท็บ Upload เพื่อเพิ่มรูป</div>
-    </section>
-
-    <footer class="muted small">
-      * ข้อมูลถูกเก็บในเบราว์เซอร์เครื่องนี้ (LocalStorage) ไม่ได้เก็บบน GitHub
-    </footer>
+<header class="header">
+  <div>
+    <h1>📸 My Gallery</h1>
+    <div class="muted small">GitHub Pages • Folder View • Drag & Drop • Search / Tag</div>
   </div>
+  <div class="tabs">
+    <div class="tab active" id="tabSearch">Search</div>
+    <div class="tab" id="tabUpload">Upload</div>
+  </div>
+</header>
 
-  <script src="app.js"></script>
+<!-- FOLDER VIEW -->
+<section class="card" id="folderView">
+  <h2>Folders</h2>
+  <div id="foldersGrid" class="foldersGrid"></div>
+</section>
+
+<!-- SEARCH -->
+<section class="panel" id="searchPanel">
+  <div class="card">
+    <div class="row">
+      <div class="field">
+        <label>Folder</label>
+        <select id="searchFolder"></select>
+      </div>
+      <div class="field grow">
+        <label>Search</label>
+        <input id="searchText">
+      </div>
+      <div class="field grow">
+        <label>Tags</label>
+        <input id="searchTags" placeholder="tag1, tag2">
+      </div>
+      <button class="secondary" onclick="clearSearch()">Clear</button>
+    </div>
+  </div>
+</section>
+
+<!-- UPLOAD -->
+<section class="panel hidden" id="uploadPanel">
+  <div class="card">
+    <div class="row">
+      <input id="newFolder" placeholder="New folder name">
+      <button onclick="createFolder()">Create</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="row">
+      <select id="uploadFolder"></select>
+      <input id="uploadTags" placeholder="tags">
+      <button class="secondary" onclick="fileInput.click()">Choose files</button>
+      <input type="file" id="fileInput" multiple hidden>
+    </div>
+    <div class="dropzone" id="dropzone">Drag & Drop images here</div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section class="card">
+  <h2>Gallery</h2>
+  <div id="gallery" class="gallery"></div>
+</section>
+
+</div>
+
+<script>
+const KEY="gallery_single_file";
+let data=JSON.parse(localStorage.getItem(KEY))||{folders:{Default:[]}};
+const $=id=>document.getElementById(id);
+
+function save(){localStorage.setItem(KEY,JSON.stringify(data))}
+function tags(s){return s.split(",").map(t=>t.trim().toLowerCase()).filter(Boolean)}
+function uid(){return Date.now()+Math.random().toString(16)}
+
+function refreshFolders(){
+  let fs=Object.keys(data.folders);
+  $("searchFolder").innerHTML='<option value="ALL">All</option>';
+  $("uploadFolder").innerHTML="";
+  fs.forEach(f=>{
+    $("searchFolder").innerHTML+=`<option>${f}</option>`;
+    $("uploadFolder").innerHTML+=`<option>${f}</option>`;
+  });
+  renderFolderView();
+}
+
+function createFolder(){
+  let n=$("newFolder").value.trim();
+  if(!n||data.folders[n])return;
+  data.folders[n]=[];
+  save();$("newFolder").value="";
+  refreshFolders();
+}
+
+function renderFolderView(){
+  let g=$("foldersGrid");g.innerHTML="";
+  Object.keys(data.folders).forEach(f=>{
+    let imgs=data.folders[f];
+    let cover=imgs.sort((a,b)=>b.t-a.t)[0];
+    g.innerHTML+=`
+      <div class="folderCard" onclick="openFolder('${f}')">
+        <div class="folderThumb">${cover?`<img src="${cover.src}">`:'No image'}</div>
+        <div class="folderMeta"><b>${f}</b><span class="folderCount">${imgs.length}</span></div>
+      </div>`;
+  });
+}
+
+function openFolder(f){
+  $("searchFolder").value=f;
+  $("tabSearch").click();
+  renderGallery();
+}
+
+function readFile(file){
+  return new Promise(r=>{
+    let fr=new FileReader();
+    fr.onload=()=>r(fr.result);
+    fr.readAsDataURL(file);
+  });
+}
+
+async function upload(files){
+  let f=$("uploadFolder").value;
+  let tg=tags($("uploadTags").value);
+  for(let file of files){
+    if(!file.type.startsWith("image"))continue;
+    data.folders[f].push({id:uid(),name:file.name,src:await readFile(file),tags:tg,t:Date.now()});
+  }
+  save();renderFolderView();renderGallery();
+}
+
+$("fileInput").onchange=e=>upload(e.target.files);
+$("dropzone").ondragover=e=>{e.preventDefault();e.target.classList.add("drag")}
+$("dropzone").ondragleave=e=>e.target.classList.remove("drag")
+$("dropzone").ondrop=e=>{
+  e.preventDefault();upload(e.dataTransfer.files);e.target.classList.remove("drag")
+}
+
+function renderGallery(){
+  let g=$("gallery");g.innerHTML="";
+  let f=$("searchFolder").value;
+  let t=$("searchText").value.toLowerCase();
+  let tg=tags($("searchTags").value);
+  Object.entries(data.folders).forEach(([fd,imgs])=>{
+    if(f!="ALL"&&fd!=f)return;
+    imgs.forEach(i=>{
+      if(t&&!i.name.toLowerCase().includes(t))return;
+      if(tg.length&&!tg.every(x=>i.tags.includes(x)))return;
+      g.innerHTML+=`
+      <div class="thumb">
+        <img src="${i.src}">
+        <div class="meta">
+          <div>${i.name}</div>
+          <div class="tags">${i.tags.map(t=>`<span class="tag">${t}</span>`).join("")}</div>
+          <div class="actions">
+            <a href="${i.src}" download="${i.name}">Download</a>
+          </div>
+        </div>
+      </div>`;
+    });
+  });
+}
+
+function clearSearch(){
+  $("searchText").value="";$("searchTags").value="";
+  $("searchFolder").value="ALL";renderGallery();
+}
+
+$("tabSearch").onclick=()=>{
+  $("tabSearch").classList.add("active");
+  $("tabUpload").classList.remove("active");
+  $("searchPanel").classList.remove("hidden");
+  $("uploadPanel").classList.add("hidden");
+}
+$("tabUpload").onclick=()=>{
+  $("tabUpload").classList.add("active");
+  $("tabSearch").classList.remove("active");
+  $("uploadPanel").classList.remove("hidden");
+  $("searchPanel").classList.add("hidden");
+}
+
+refreshFolders();renderGallery();
+</script>
 </body>
 </html>
