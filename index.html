@@ -2,71 +2,179 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<title>My Gallery</title>
+<title>Pastel Gallery</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
 :root{
-  --bg:#0b1220;--card:#111a2e;--text:#e8eefc;--muted:#a9b4d0;
-  --line:rgba(255,255,255,.08);--btn:#2d6cdf;--btn2:#24314f;--danger:#b42318;
-  --radius:16px;
+  --bg:#f6f8ff;
+  --card:#ffffff;
+  --text:#334155;
+  --muted:#94a3b8;
+  --line:#e5e7eb;
+
+  --blue:#93c5fd;
+  --blue-dark:#60a5fa;
+
+  --pink:#fbcfe8;
+  --pink-dark:#f472b6;
+
+  --radius:18px;
 }
+
 *{box-sizing:border-box}
 body{
-  margin:0;font-family:system-ui;
-  background:radial-gradient(900px 500px at 20% 10%,rgba(45,108,223,.3),transparent),
-             radial-gradient(800px 500px at 80% 20%,rgba(125,45,223,.25),transparent),
-             var(--bg);
+  margin:0;
+  font-family: system-ui,-apple-system;
+  background:
+    radial-gradient(800px 400px at 10% 10%, #fde7f3, transparent),
+    radial-gradient(700px 400px at 90% 20%, #e0f2fe, transparent),
+    var(--bg);
   color:var(--text);
 }
-.container{max-width:1100px;margin:24px auto;padding:0 16px}
+
+.container{
+  max-width:1100px;
+  margin:24px auto;
+  padding:0 16px;
+}
+
 h1{margin:0}
-.muted{color:var(--muted)} .small{font-size:12px}
+.muted{color:var(--muted)}
+.small{font-size:12px}
 
-.header{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:16px;
+  flex-wrap:wrap;
+}
+
 .tabs{display:flex;gap:8px}
-.tab{padding:10px 16px;border-radius:999px;border:1px solid var(--line);
-background:#111a2e;color:white;font-weight:700;cursor:pointer}
-.tab.active{background:var(--btn);border:none}
+.tab{
+  padding:10px 18px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:white;
+  cursor:pointer;
+  font-weight:700;
+}
+.tab.active{
+  background:linear-gradient(135deg,var(--blue),var(--pink));
+  color:#1e293b;
+  border:none;
+}
 
-.card{background:rgba(17,26,46,.9);border:1px solid var(--line);
-border-radius:var(--radius);padding:16px;margin:14px 0}
+.card{
+  background:var(--card);
+  border-radius:var(--radius);
+  padding:16px;
+  margin:16px 0;
+  box-shadow:0 10px 25px rgba(0,0,0,.06);
+}
+
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:end}
 .field{display:flex;flex-direction:column;gap:6px;min-width:220px}
 .field.grow{flex:1}
 
-input,select{padding:10px 12px;border-radius:12px;border:1px solid var(--line);
-background:#0f1830;color:white}
-button{padding:10px 14px;border-radius:12px;border:none;
-background:var(--btn);color:white;font-weight:700;cursor:pointer}
-button.secondary{background:var(--btn2);border:1px solid var(--line)}
-button.danger{background:var(--danger)}
+input,select{
+  padding:12px 14px;
+  border-radius:14px;
+  border:1px solid var(--line);
+  background:#fff;
+  font-size:14px;
+}
+
+button{
+  padding:12px 16px;
+  border-radius:14px;
+  border:none;
+  background:linear-gradient(135deg,var(--blue),var(--pink));
+  font-weight:700;
+  cursor:pointer;
+}
+button.secondary{
+  background:#f1f5f9;
+}
 
 .panel.hidden{display:none}
 
-.dropzone{
-  border:2px dashed rgba(255,255,255,.18);border-radius:16px;padding:20px;
-  text-align:center;margin-top:12px
+/* Folder view */
+.foldersGrid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:14px;
 }
-.dropzone.drag{border-color:#7c3aed}
-
-.foldersGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
-.folderCard{background:#0f1830;border:1px solid var(--line);border-radius:14px;
-overflow:hidden;cursor:pointer}
-.folderThumb{height:140px;display:flex;align-items:center;justify-content:center}
+.folderCard{
+  border-radius:16px;
+  overflow:hidden;
+  cursor:pointer;
+  background:#f8fafc;
+  border:1px solid var(--line);
+}
+.folderThumb{
+  height:140px;
+  background:#f1f5f9;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
 .folderThumb img{width:100%;height:100%;object-fit:cover}
-.folderMeta{padding:12px;display:flex;justify-content:space-between;gap:8px}
-.folderCount{font-size:12px;color:var(--muted)}
+.folderMeta{
+  padding:12px;
+  display:flex;
+  justify-content:space-between;
+  font-weight:700;
+}
 
-.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
-gap:12px;margin-top:12px}
-.thumb{background:#0f1830;border:1px solid var(--line);border-radius:14px;overflow:hidden}
-.thumb img{width:100%;height:160px;object-fit:cover}
-.meta{padding:10px;display:flex;flex-direction:column;gap:8px}
+/* Upload */
+.dropzone{
+  margin-top:12px;
+  padding:24px;
+  border-radius:18px;
+  border:2px dashed #c7d2fe;
+  text-align:center;
+  background:#fdf2f8;
+}
+.dropzone.drag{
+  background:#e0f2fe;
+}
+
+/* Gallery */
+.gallery{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:14px;
+}
+.thumb{
+  border-radius:16px;
+  overflow:hidden;
+  background:white;
+  border:1px solid var(--line);
+}
+.thumb img{
+  width:100%;
+  height:160px;
+  object-fit:cover;
+}
+.meta{padding:12px;display:flex;flex-direction:column;gap:8px}
 .tags{display:flex;gap:6px;flex-wrap:wrap}
-.tag{font-size:11px;padding:3px 8px;border-radius:999px;border:1px solid var(--line)}
-.actions a{background:var(--btn2);border:1px solid var(--line);color:white;
-text-decoration:none;text-align:center;padding:8px;border-radius:10px;font-size:12px}
+.tag{
+  font-size:11px;
+  padding:4px 10px;
+  border-radius:999px;
+  background:#e0f2fe;
+}
+.actions a{
+  text-decoration:none;
+  text-align:center;
+  padding:10px;
+  border-radius:12px;
+  background:#f1f5f9;
+  color:#334155;
+  font-size:13px;
+}
 </style>
 </head>
 
@@ -75,8 +183,8 @@ text-decoration:none;text-align:center;padding:8px;border-radius:10px;font-size:
 
 <header class="header">
   <div>
-    <h1>📸 My Gallery</h1>
-    <div class="muted small">GitHub Pages • Folder View • Drag & Drop • Search / Tag</div>
+    <h1>🌸 Pastel Gallery</h1>
+    <div class="muted small">Folder • Drag & Drop • Upload (iPhone OK)</div>
   </div>
   <div class="tabs">
     <div class="tab active" id="tabSearch">Search</div>
@@ -84,53 +192,41 @@ text-decoration:none;text-align:center;padding:8px;border-radius:10px;font-size:
   </div>
 </header>
 
-<!-- FOLDER VIEW -->
 <section class="card" id="folderView">
   <h2>Folders</h2>
   <div id="foldersGrid" class="foldersGrid"></div>
 </section>
 
-<!-- SEARCH -->
 <section class="panel" id="searchPanel">
   <div class="card">
     <div class="row">
-      <div class="field">
-        <label>Folder</label>
-        <select id="searchFolder"></select>
-      </div>
-      <div class="field grow">
-        <label>Search</label>
-        <input id="searchText">
-      </div>
-      <div class="field grow">
-        <label>Tags</label>
-        <input id="searchTags" placeholder="tag1, tag2">
-      </div>
+      <select id="searchFolder"></select>
+      <input id="searchText" placeholder="Search name">
+      <input id="searchTags" placeholder="tag1, tag2">
       <button class="secondary" onclick="clearSearch()">Clear</button>
     </div>
   </div>
 </section>
 
-<!-- UPLOAD -->
 <section class="panel hidden" id="uploadPanel">
   <div class="card">
     <div class="row">
-      <input id="newFolder" placeholder="New folder name">
+      <input id="newFolder" placeholder="New folder">
       <button onclick="createFolder()">Create</button>
     </div>
   </div>
+
   <div class="card">
     <div class="row">
       <select id="uploadFolder"></select>
       <input id="uploadTags" placeholder="tags">
-      <button class="secondary" onclick="fileInput.click()">Choose files</button>
-      <input type="file" id="fileInput" multiple hidden>
+      <button class="secondary" id="btnChoose">Choose images</button>
+      <input type="file" id="fileInput" multiple accept="image/*" style="display:none">
     </div>
     <div class="dropzone" id="dropzone">Drag & Drop images here</div>
   </div>
 </section>
 
-<!-- GALLERY -->
 <section class="card">
   <h2>Gallery</h2>
   <div id="gallery" class="gallery"></div>
@@ -139,13 +235,13 @@ text-decoration:none;text-align:center;padding:8px;border-radius:10px;font-size:
 </div>
 
 <script>
-const KEY="gallery_single_file";
+const KEY="pastel_gallery";
 let data=JSON.parse(localStorage.getItem(KEY))||{folders:{Default:[]}};
 const $=id=>document.getElementById(id);
 
 function save(){localStorage.setItem(KEY,JSON.stringify(data))}
-function tags(s){return s.split(",").map(t=>t.trim().toLowerCase()).filter(Boolean)}
-function uid(){return Date.now()+Math.random().toString(16)}
+function uid(){return Date.now()+Math.random()}
+function tags(v){return v.split(",").map(t=>t.trim().toLowerCase()).filter(Boolean)}
 
 function refreshFolders(){
   let fs=Object.keys(data.folders);
@@ -155,7 +251,7 @@ function refreshFolders(){
     $("searchFolder").innerHTML+=`<option>${f}</option>`;
     $("uploadFolder").innerHTML+=`<option>${f}</option>`;
   });
-  renderFolderView();
+  renderFolders();
 }
 
 function createFolder(){
@@ -166,26 +262,24 @@ function createFolder(){
   refreshFolders();
 }
 
-function renderFolderView(){
+function renderFolders(){
   let g=$("foldersGrid");g.innerHTML="";
-  Object.keys(data.folders).forEach(f=>{
-    let imgs=data.folders[f];
-    let cover=imgs.sort((a,b)=>b.t-a.t)[0];
+  Object.entries(data.folders).forEach(([f,imgs])=>{
+    let cover=[...imgs].sort((a,b)=>b.t-a.t)[0];
     g.innerHTML+=`
       <div class="folderCard" onclick="openFolder('${f}')">
         <div class="folderThumb">${cover?`<img src="${cover.src}">`:'No image'}</div>
-        <div class="folderMeta"><b>${f}</b><span class="folderCount">${imgs.length}</span></div>
+        <div class="folderMeta">${f}<span>${imgs.length}</span></div>
       </div>`;
   });
 }
 
 function openFolder(f){
   $("searchFolder").value=f;
-  $("tabSearch").click();
   renderGallery();
 }
 
-function readFile(file){
+async function readFile(file){
   return new Promise(r=>{
     let fr=new FileReader();
     fr.onload=()=>r(fr.result);
@@ -193,21 +287,25 @@ function readFile(file){
   });
 }
 
-async function upload(files){
+async function uploadFiles(files){
   let f=$("uploadFolder").value;
   let tg=tags($("uploadTags").value);
   for(let file of files){
     if(!file.type.startsWith("image"))continue;
-    data.folders[f].push({id:uid(),name:file.name,src:await readFile(file),tags:tg,t:Date.now()});
+    data.folders[f].push({
+      id:uid(),name:file.name,src:await readFile(file),tags:tg,t:Date.now()
+    });
   }
-  save();renderFolderView();renderGallery();
+  save();renderFolders();renderGallery();
 }
 
-$("fileInput").onchange=e=>upload(e.target.files);
+$("btnChoose").onclick=()=> $("fileInput").click();
+$("fileInput").addEventListener("change",e=>uploadFiles(e.target.files));
+
 $("dropzone").ondragover=e=>{e.preventDefault();e.target.classList.add("drag")}
 $("dropzone").ondragleave=e=>e.target.classList.remove("drag")
 $("dropzone").ondrop=e=>{
-  e.preventDefault();upload(e.dataTransfer.files);e.target.classList.remove("drag")
+  e.preventDefault();uploadFiles(e.dataTransfer.files);e.target.classList.remove("drag")
 }
 
 function renderGallery(){
@@ -224,11 +322,9 @@ function renderGallery(){
       <div class="thumb">
         <img src="${i.src}">
         <div class="meta">
-          <div>${i.name}</div>
+          <b>${i.name}</b>
           <div class="tags">${i.tags.map(t=>`<span class="tag">${t}</span>`).join("")}</div>
-          <div class="actions">
-            <a href="${i.src}" download="${i.name}">Download</a>
-          </div>
+          <div class="actions"><a href="${i.src}" download="${i.name}">Download</a></div>
         </div>
       </div>`;
     });
