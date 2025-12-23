@@ -12,60 +12,22 @@
   --text:#334155;
   --muted:#94a3b8;
   --line:#e5e7eb;
-
   --blue:#93c5fd;
-  --blue-dark:#60a5fa;
-
   --pink:#fbcfe8;
-  --pink-dark:#f472b6;
-
   --radius:18px;
 }
-
 *{box-sizing:border-box}
 body{
   margin:0;
-  font-family: system-ui,-apple-system;
+  font-family:system-ui,-apple-system;
   background:
     radial-gradient(800px 400px at 10% 10%, #fde7f3, transparent),
     radial-gradient(700px 400px at 90% 20%, #e0f2fe, transparent),
     var(--bg);
   color:var(--text);
 }
-
-.container{
-  max-width:1100px;
-  margin:24px auto;
-  padding:0 16px;
-}
-
+.container{max-width:1100px;margin:24px auto;padding:0 16px}
 h1{margin:0}
-.muted{color:var(--muted)}
-.small{font-size:12px}
-
-.header{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-end;
-  gap:16px;
-  flex-wrap:wrap;
-}
-
-.tabs{display:flex;gap:8px}
-.tab{
-  padding:10px 18px;
-  border-radius:999px;
-  border:1px solid var(--line);
-  background:white;
-  cursor:pointer;
-  font-weight:700;
-}
-.tab.active{
-  background:linear-gradient(135deg,var(--blue),var(--pink));
-  color:#1e293b;
-  border:none;
-}
-
 .card{
   background:var(--card);
   border-radius:var(--radius);
@@ -73,283 +35,195 @@ h1{margin:0}
   margin:16px 0;
   box-shadow:0 10px 25px rgba(0,0,0,.06);
 }
-
-.row{display:flex;gap:10px;flex-wrap:wrap;align-items:end}
-.field{display:flex;flex-direction:column;gap:6px;min-width:220px}
-.field.grow{flex:1}
-
+.row{display:flex;gap:10px;flex-wrap:wrap}
 input,select{
-  padding:12px 14px;
-  border-radius:14px;
-  border:1px solid var(--line);
-  background:#fff;
-  font-size:14px;
+  padding:12px;border-radius:14px;border:1px solid var(--line);
 }
-
 button{
-  padding:12px 16px;
-  border-radius:14px;
-  border:none;
+  padding:12px 16px;border-radius:14px;border:none;
   background:linear-gradient(135deg,var(--blue),var(--pink));
-  font-weight:700;
-  cursor:pointer;
+  font-weight:700;cursor:pointer;
 }
-button.secondary{
-  background:#f1f5f9;
-}
+button.secondary{background:#f1f5f9}
 
-.panel.hidden{display:none}
-
-/* Folder view */
-.foldersGrid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
-  gap:14px;
-}
-.folderCard{
-  border-radius:16px;
-  overflow:hidden;
-  cursor:pointer;
-  background:#f8fafc;
-  border:1px solid var(--line);
-}
-.folderThumb{
-  height:140px;
-  background:#f1f5f9;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
+.foldersGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.folderCard{border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.folderThumb{height:140px;background:#f1f5f9;display:flex;align-items:center;justify-content:center}
 .folderThumb img{width:100%;height:100%;object-fit:cover}
-.folderMeta{
-  padding:12px;
-  display:flex;
-  justify-content:space-between;
-  font-weight:700;
-}
+.folderMeta{padding:12px;font-weight:700;display:flex;justify-content:space-between}
 
-/* Upload */
 .dropzone{
-  margin-top:12px;
-  padding:24px;
-  border-radius:18px;
   border:2px dashed #c7d2fe;
+  border-radius:18px;
+  padding:24px;
   text-align:center;
   background:#fdf2f8;
 }
-.dropzone.drag{
-  background:#e0f2fe;
-}
+.dropzone.drag{background:#e0f2fe}
 
-/* Gallery */
-.gallery{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
-  gap:14px;
-}
-.thumb{
-  border-radius:16px;
-  overflow:hidden;
-  background:white;
-  border:1px solid var(--line);
-}
-.thumb img{
-  width:100%;
-  height:160px;
-  object-fit:cover;
-}
-.meta{padding:12px;display:flex;flex-direction:column;gap:8px}
-.tags{display:flex;gap:6px;flex-wrap:wrap}
-.tag{
-  font-size:11px;
-  padding:4px 10px;
-  border-radius:999px;
-  background:#e0f2fe;
-}
-.actions a{
-  text-decoration:none;
-  text-align:center;
-  padding:10px;
-  border-radius:12px;
-  background:#f1f5f9;
-  color:#334155;
-  font-size:13px;
-}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.thumb{border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.thumb img{width:100%;height:160px;object-fit:cover}
+.meta{padding:12px}
 </style>
 </head>
 
 <body>
 <div class="container">
 
-<header class="header">
-  <div>
-    <h1>🌸 Pastel Gallery</h1>
-    <div class="muted small">Folder • Drag & Drop • Upload (iPhone OK)</div>
-  </div>
-  <div class="tabs">
-    <div class="tab active" id="tabSearch">Search</div>
-    <div class="tab" id="tabUpload">Upload</div>
-  </div>
-</header>
+<h1>🌸 Pastel Gallery</h1>
 
-<section class="card" id="folderView">
+<!-- Folder View -->
+<div class="card">
   <h2>Folders</h2>
   <div id="foldersGrid" class="foldersGrid"></div>
-</section>
+</div>
 
-<section class="panel" id="searchPanel">
-  <div class="card">
-    <div class="row">
-      <select id="searchFolder"></select>
-      <input id="searchText" placeholder="Search name">
-      <input id="searchTags" placeholder="tag1, tag2">
-      <button class="secondary" onclick="clearSearch()">Clear</button>
-    </div>
+<!-- Upload -->
+<div class="card">
+  <div class="row">
+    <select id="uploadFolder"></select>
+    <input id="uploadTags" placeholder="tags (optional)">
+    <button class="secondary" id="btnChoose">Choose images</button>
+    <input type="file" id="fileInput" accept="image/*" multiple hidden>
   </div>
-</section>
+  <div id="dropzone" class="dropzone">Drag & Drop images here</div>
+</div>
 
-<section class="panel hidden" id="uploadPanel">
-  <div class="card">
-    <div class="row">
-      <input id="newFolder" placeholder="New folder">
-      <button onclick="createFolder()">Create</button>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="row">
-      <select id="uploadFolder"></select>
-      <input id="uploadTags" placeholder="tags">
-      <button class="secondary" id="btnChoose">Choose images</button>
-      <input type="file" id="fileInput" multiple accept="image/*" style="display:none">
-    </div>
-    <div class="dropzone" id="dropzone">Drag & Drop images here</div>
-  </div>
-</section>
-
-<section class="card">
+<!-- Gallery -->
+<div class="card">
   <h2>Gallery</h2>
   <div id="gallery" class="gallery"></div>
-</section>
+</div>
 
 </div>
 
 <script>
-const KEY="pastel_gallery";
-let data=JSON.parse(localStorage.getItem(KEY))||{folders:{Default:[]}};
+const KEY="pastel_gallery_fixed";
 const $=id=>document.getElementById(id);
 
-function save(){localStorage.setItem(KEY,JSON.stringify(data))}
-function uid(){return Date.now()+Math.random()}
-function tags(v){return v.split(",").map(t=>t.trim().toLowerCase()).filter(Boolean)}
+/* ---------- STATE ---------- */
+let state = JSON.parse(localStorage.getItem(KEY));
+if(!state || !state.folders){
+  state={folders:{Default:[]}};
+  save();
+}
 
+function save(){
+  localStorage.setItem(KEY,JSON.stringify(state));
+}
+
+function uid(){
+  return Date.now()+"_"+Math.random().toString(16).slice(2);
+}
+
+function ensureFolder(name){
+  if(!state.folders[name]){
+    state.folders[name]=[];
+  }
+}
+
+/* ---------- UI ---------- */
 function refreshFolders(){
-  let fs=Object.keys(data.folders);
-  $("searchFolder").innerHTML='<option value="ALL">All</option>';
-  $("uploadFolder").innerHTML="";
-  fs.forEach(f=>{
-    $("searchFolder").innerHTML+=`<option>${f}</option>`;
-    $("uploadFolder").innerHTML+=`<option>${f}</option>`;
+  const sel=$("uploadFolder");
+  sel.innerHTML="";
+  Object.keys(state.folders).forEach(f=>{
+    const o=document.createElement("option");
+    o.value=f;o.textContent=f;
+    sel.appendChild(o);
   });
+  if(!sel.value) sel.value="Default";
   renderFolders();
 }
 
-function createFolder(){
-  let n=$("newFolder").value.trim();
-  if(!n||data.folders[n])return;
-  data.folders[n]=[];
-  save();$("newFolder").value="";
-  refreshFolders();
-}
-
 function renderFolders(){
-  let g=$("foldersGrid");g.innerHTML="";
-  Object.entries(data.folders).forEach(([f,imgs])=>{
-    let cover=[...imgs].sort((a,b)=>b.t-a.t)[0];
+  const g=$("foldersGrid");
+  g.innerHTML="";
+  Object.entries(state.folders).forEach(([f,imgs])=>{
+    const cover=imgs.slice().sort((a,b)=>b.t-a.t)[0];
     g.innerHTML+=`
-      <div class="folderCard" onclick="openFolder('${f}')">
-        <div class="folderThumb">${cover?`<img src="${cover.src}">`:'No image'}</div>
+      <div class="folderCard">
+        <div class="folderThumb">
+          ${cover?`<img src="${cover.src}">`:"No image"}
+        </div>
         <div class="folderMeta">${f}<span>${imgs.length}</span></div>
       </div>`;
   });
 }
 
-function openFolder(f){
-  $("searchFolder").value=f;
+/* ---------- FILE HANDLING ---------- */
+function readFile(file){
+  return new Promise((resolve,reject)=>{
+    const r=new FileReader();
+    r.onload=()=>resolve(r.result);
+    r.onerror=reject;
+    r.readAsDataURL(file);
+  });
+}
+
+async function uploadFiles(fileList){
+  const folder=$("uploadFolder").value || "Default";
+  ensureFolder(folder);
+
+  const tags=$("uploadTags").value
+    .split(",").map(t=>t.trim()).filter(Boolean);
+
+  for(const file of fileList){
+    if(!file.type.startsWith("image/")) continue;
+    const src=await readFile(file);
+    state.folders[folder].push({
+      id:uid(),
+      name:file.name,
+      src,
+      tags,
+      t:Date.now()
+    });
+  }
+  save();
+  renderFolders();
   renderGallery();
 }
 
-async function readFile(file){
-  return new Promise(r=>{
-    let fr=new FileReader();
-    fr.onload=()=>r(fr.result);
-    fr.readAsDataURL(file);
-  });
-}
+/* ---------- EVENTS ---------- */
+$("btnChoose").addEventListener("click",()=>{
+  $("fileInput").value="";
+  $("fileInput").click();
+});
 
-async function uploadFiles(files){
-  let f=$("uploadFolder").value;
-  let tg=tags($("uploadTags").value);
-  for(let file of files){
-    if(!file.type.startsWith("image"))continue;
-    data.folders[f].push({
-      id:uid(),name:file.name,src:await readFile(file),tags:tg,t:Date.now()
-    });
+$("fileInput").addEventListener("change",e=>{
+  if(e.target.files.length){
+    uploadFiles(e.target.files);
   }
-  save();renderFolders();renderGallery();
-}
+});
 
-$("btnChoose").onclick=()=> $("fileInput").click();
-$("fileInput").addEventListener("change",e=>uploadFiles(e.target.files));
+const dz=$("dropzone");
+dz.addEventListener("dragover",e=>{
+  e.preventDefault();dz.classList.add("drag");
+});
+dz.addEventListener("dragleave",()=>dz.classList.remove("drag"));
+dz.addEventListener("drop",e=>{
+  e.preventDefault();dz.classList.remove("drag");
+  if(e.dataTransfer.files.length){
+    uploadFiles(e.dataTransfer.files);
+  }
+});
 
-$("dropzone").ondragover=e=>{e.preventDefault();e.target.classList.add("drag")}
-$("dropzone").ondragleave=e=>e.target.classList.remove("drag")
-$("dropzone").ondrop=e=>{
-  e.preventDefault();uploadFiles(e.dataTransfer.files);e.target.classList.remove("drag")
-}
-
+/* ---------- GALLERY ---------- */
 function renderGallery(){
-  let g=$("gallery");g.innerHTML="";
-  let f=$("searchFolder").value;
-  let t=$("searchText").value.toLowerCase();
-  let tg=tags($("searchTags").value);
-  Object.entries(data.folders).forEach(([fd,imgs])=>{
-    if(f!="ALL"&&fd!=f)return;
-    imgs.forEach(i=>{
-      if(t&&!i.name.toLowerCase().includes(t))return;
-      if(tg.length&&!tg.every(x=>i.tags.includes(x)))return;
-      g.innerHTML+=`
+  const g=$("gallery");
+  g.innerHTML="";
+  Object.values(state.folders).flat().forEach(i=>{
+    g.innerHTML+=`
       <div class="thumb">
         <img src="${i.src}">
-        <div class="meta">
-          <b>${i.name}</b>
-          <div class="tags">${i.tags.map(t=>`<span class="tag">${t}</span>`).join("")}</div>
-          <div class="actions"><a href="${i.src}" download="${i.name}">Download</a></div>
-        </div>
+        <div class="meta">${i.name}</div>
       </div>`;
-    });
   });
 }
 
-function clearSearch(){
-  $("searchText").value="";$("searchTags").value="";
-  $("searchFolder").value="ALL";renderGallery();
-}
-
-$("tabSearch").onclick=()=>{
-  $("tabSearch").classList.add("active");
-  $("tabUpload").classList.remove("active");
-  $("searchPanel").classList.remove("hidden");
-  $("uploadPanel").classList.add("hidden");
-}
-$("tabUpload").onclick=()=>{
-  $("tabUpload").classList.add("active");
-  $("tabSearch").classList.remove("active");
-  $("uploadPanel").classList.remove("hidden");
-  $("searchPanel").classList.add("hidden");
-}
-
-refreshFolders();renderGallery();
+/* ---------- INIT ---------- */
+refreshFolders();
+renderGallery();
 </script>
 </body>
 </html>
