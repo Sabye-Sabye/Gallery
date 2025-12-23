@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Pastel Gallery</title>
+<title>My Gallery</title>
 
 <style>
 :root{
@@ -13,11 +13,10 @@
   --muted:#94a3b8;
   --line:#e5e7eb;
 
-  --blue:#93c5fd;
-  --pink:#fbcfe8;
-
-  --blue2:#e0f2fe;
-  --pink2:#fdf2f8;
+  /* Single pastel color */
+  --accent:#93c5fd;        /* pastel blue */
+  --accent-2:#bfdbfe;      /* lighter */
+  --accent-text:#0b3a75;
 
   --radius:18px;
   --shadow: 0 10px 25px rgba(15, 23, 42, .08);
@@ -28,8 +27,8 @@ body{
   margin:0;
   font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial;
   background:
-    radial-gradient(900px 450px at 12% 12%, #fde7f3, transparent 60%),
-    radial-gradient(900px 450px at 88% 20%, #e0f2fe, transparent 60%),
+    radial-gradient(900px 450px at 12% 12%, rgba(147,197,253,.35), transparent 60%),
+    radial-gradient(900px 450px at 88% 20%, rgba(191,219,254,.35), transparent 60%),
     var(--bg);
   color:var(--text);
 }
@@ -50,12 +49,13 @@ h2{margin:0 0 10px;font-size:16px}
   user-select:none;
   padding:10px 18px;border-radius:999px;
   border:1px solid var(--line);
-  background:rgba(255,255,255,.8);
-  cursor:pointer;font-weight:800;
+  background:rgba(255,255,255,.9);
+  cursor:pointer;font-weight:900;
 }
 .tab.active{
-  border:none;
-  background: linear-gradient(135deg, var(--blue), var(--pink));
+  border:1px solid rgba(147,197,253,.65);
+  background: rgba(147,197,253,.35);
+  color: var(--accent-text);
 }
 
 .card{
@@ -80,16 +80,23 @@ input,select{
 }
 
 button{
-  padding:12px 16px;border-radius:14px;border:none;
-  background: linear-gradient(135deg, var(--blue), var(--pink));
-  font-weight:900;cursor:pointer;
+  padding:12px 16px;border-radius:14px;border:1px solid rgba(147,197,253,.75);
+  background: rgba(147,197,253,.35);
+  color: var(--accent-text);
+  font-weight:950;
+  cursor:pointer;
 }
 button.secondary{
-  background:#f1f5f9;border:1px solid var(--line);
+  background: rgba(191,219,254,.35);
+  border:1px solid rgba(147,197,253,.55);
+  color: var(--accent-text);
 }
 button.danger{
-  background: #fecaca; border:1px solid #fca5a5;
+  background: rgba(147,197,253,.18);
+  border:1px solid rgba(147,197,253,.55);
+  color: #7a1d1d;
 }
+button:disabled{opacity:.6;cursor:not-allowed}
 
 .panel.hidden{display:none}
 
@@ -110,7 +117,7 @@ button.danger{
 .folderCard:hover{transform:scale(1.01)}
 .folderThumb{
   height:140px;
-  background:linear-gradient(135deg, var(--pink2), var(--blue2));
+  background: rgba(191,219,254,.25);
   display:flex;align-items:center;justify-content:center;
   overflow:hidden;
 }
@@ -120,36 +127,29 @@ button.danger{
   padding:12px;
   display:flex;align-items:center;justify-content:space-between;gap:10px;
 }
-.folderName{font-weight:900;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.folderName{font-weight:950;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .folderCount{
   font-size:12px;color:var(--muted);
   padding:4px 10px;border-radius:999px;border:1px solid var(--line);
   background:#f8fafc;
 }
-
-.folderActions{
-  display:flex;gap:8px;flex-wrap:wrap;
-  margin-top:10px;
-}
+.folderRight{display:flex;gap:8px;align-items:center}
 
 /* Dropzone */
 .dropzone{
   margin-top:12px;
   padding:22px;
   border-radius:18px;
-  border:2px dashed #c7d2fe;
+  border:2px dashed rgba(147,197,253,.85);
   text-align:center;
-  background: var(--pink2);
+  background: rgba(191,219,254,.18);
 }
 .dropzone.drag{
-  background: var(--blue2);
-  border-color: #93c5fd;
+  background: rgba(147,197,253,.18);
+  border-color: rgba(96,165,250,.95);
 }
 
 /* Gallery */
-.galleryHeader{
-  display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
-}
 .gallery{
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
@@ -164,7 +164,7 @@ button.danger{
 .thumb img{width:100%;height:160px;object-fit:cover;display:block}
 .meta{padding:12px;display:flex;flex-direction:column;gap:8px}
 .metaTop{display:flex;justify-content:space-between;gap:10px;align-items:center}
-.fileName{font-weight:900;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fileName{font-weight:950;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .badge{
   font-size:11px;
   padding:4px 10px;
@@ -177,8 +177,9 @@ button.danger{
 .tags{display:flex;gap:6px;flex-wrap:wrap}
 .tag{
   font-size:11px;padding:4px 10px;border-radius:999px;
-  background: var(--blue2);
-  border:1px solid rgba(147,197,253,.5);
+  background: rgba(191,219,254,.35);
+  border:1px solid rgba(147,197,253,.55);
+  color: var(--accent-text);
 }
 .actions{display:flex;gap:8px}
 .actions a, .actions button{
@@ -186,13 +187,24 @@ button.danger{
   text-align:center;
   padding:10px;
   border-radius:12px;
-  border:1px solid var(--line);
-  background:#f8fafc;
-  color:#334155;
-  font-weight:900;
+  border:1px solid rgba(147,197,253,.55);
+  background: rgba(191,219,254,.25);
+  color: var(--accent-text);
+  font-weight:950;
   text-decoration:none;
 }
 .actions button{cursor:pointer}
+
+/* Status box */
+.status{
+  border-radius:14px;
+  border:1px solid rgba(147,197,253,.45);
+  background: rgba(191,219,254,.18);
+  padding:12px;
+  white-space:pre-wrap;
+}
+.status.ok{border-color:rgba(34,197,94,.35); background:rgba(34,197,94,.08)}
+.status.err{border-color:rgba(239,68,68,.35); background:rgba(239,68,68,.08)}
 </style>
 </head>
 
@@ -201,8 +213,8 @@ button.danger{
 
   <header class="header">
     <div>
-      <h1>🌸 Pastel Gallery</h1>
-      <div class="muted small">Folder View • Upload • Search/Tag • Delete folder/image • LocalStorage</div>
+      <h1>Pastel Gallery</h1>
+      <div class="muted small">GitHub Pages • เก็บรูปใน LocalStorage (ฝั่งเครื่อง) • อัปโหลด + ลบโฟลเดอร์/รูป</div>
     </div>
 
     <div class="tabs">
@@ -211,12 +223,18 @@ button.danger{
     </div>
   </header>
 
-  <!-- Folder View (Home) -->
+  <section class="card">
+    <h2>Status</h2>
+    <div id="statusBox" class="status">พร้อมใช้งาน</div>
+    <div class="muted small" id="storageInfo">—</div>
+  </section>
+
+  <!-- Folder View -->
   <section class="card" id="folderViewCard">
-    <div class="galleryHeader">
-      <h2>Folders</h2>
-      <div class="folderActions">
-        <button class="secondary" id="btnShowAll">Show All Gallery</button>
+    <div class="row" style="justify-content:space-between;align-items:center">
+      <h2 style="margin:0">Folders</h2>
+      <div class="row" style="margin:0">
+        <button class="secondary" id="btnShowAll">Show All</button>
         <button class="danger" id="btnResetAll" title="ลบข้อมูลทั้งหมดในเครื่องนี้">Reset All</button>
       </div>
     </div>
@@ -224,7 +242,7 @@ button.danger{
     <div id="foldersEmpty" class="muted">ยังไม่มีโฟลเดอร์ — ไปที่แท็บ Upload เพื่อสร้างโฟลเดอร์</div>
   </section>
 
-  <!-- Search Tab -->
+  <!-- Search -->
   <section class="panel" id="panelSearch">
     <div class="card">
       <h2>ค้นหา / ฟิลเตอร์</h2>
@@ -250,7 +268,7 @@ button.danger{
     </div>
   </section>
 
-  <!-- Upload Tab -->
+  <!-- Upload -->
   <section class="panel hidden" id="panelUpload">
     <div class="card">
       <h2>สร้างโฟลเดอร์</h2>
@@ -264,7 +282,6 @@ button.danger{
           <button id="btnCreateFolder">Create</button>
         </div>
       </div>
-      <div class="muted small" id="createMsg">—</div>
     </div>
 
     <div class="card">
@@ -281,25 +298,21 @@ button.danger{
         <div class="field">
           <label>&nbsp;</label>
           <button class="secondary" id="btnChoose">Choose images</button>
+          <!-- IMPORTANT: accept + multiple + not disabled -->
           <input type="file" id="fileInput" accept="image/*" multiple hidden />
         </div>
       </div>
 
       <div id="dropzone" class="dropzone">
-        <div style="font-weight:900">ลากไฟล์รูปมาวางที่นี่ (Drag & Drop)</div>
-        <div class="muted small">บน iPhone แนะนำใช้ Choose images</div>
+        <div style="font-weight:950">ลากไฟล์รูปมาวางที่นี่ (Drag & Drop)</div>
+        <div class="muted small">iPhone อาจไม่รองรับ Drag&Drop → ใช้ Choose images</div>
       </div>
-
-      <div class="muted small" id="uploadMsg">—</div>
     </div>
   </section>
 
   <!-- Gallery -->
   <section class="card">
-    <div class="galleryHeader">
-      <h2>Gallery</h2>
-      <div class="muted small" id="galleryHint">คลิกโฟลเดอร์เพื่อดูรูปเฉพาะโฟลเดอร์ • หรือ Show All</div>
-    </div>
+    <h2>Gallery</h2>
     <div id="gallery" class="gallery"></div>
     <div id="emptyState" class="muted">ยังไม่มีรูป — ไปที่แท็บ Upload เพื่อเพิ่มรูป</div>
   </section>
@@ -308,10 +321,18 @@ button.danger{
 
 <script>
 /* =========================
-   Storage + Helpers
+   Robust single-file gallery (LocalStorage)
 ========================= */
-const STORAGE_KEY = "pastel_gallery_v3";
+const STORAGE_KEY = "pastel_gallery_v4";
 const $ = (id) => document.getElementById(id);
+
+function setStatus(msg, type="") {
+  const box = $("statusBox");
+  box.className = "status" + (type ? " " + type : "");
+  box.textContent = msg;
+  // Also log for debugging
+  console.log("[STATUS]", msg);
+}
 
 function uid() {
   return Date.now().toString(16) + "_" + Math.random().toString(16).slice(2);
@@ -334,23 +355,31 @@ function sanitizeFolderName(name) {
     .trim();
 }
 
+function safeJsonParse(raw, fallback) {
+  try { return JSON.parse(raw); } catch { return fallback; }
+}
+
 let state = loadState();
 
 function loadState() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return { folders: { "Default": [] } };
-    const parsed = JSON.parse(raw);
-    if (!parsed?.folders) return { folders: { "Default": [] } };
-    if (!parsed.folders["Default"]) parsed.folders["Default"] = [];
-    return parsed;
-  } catch {
-    return { folders: { "Default": [] } };
-  }
+  const raw = localStorage.getItem(STORAGE_KEY);
+  const parsed = raw ? safeJsonParse(raw, null) : null;
+  if (!parsed || !parsed.folders) return { folders: { "Default": [] } };
+  if (!parsed.folders["Default"]) parsed.folders["Default"] = [];
+  return parsed;
 }
 
 function saveState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  updateStorageInfo();
+}
+
+function updateStorageInfo() {
+  // rough size
+  const raw = localStorage.getItem(STORAGE_KEY) || "";
+  const bytes = new Blob([raw]).size;
+  const mb = (bytes / (1024*1024)).toFixed(2);
+  $("storageInfo").textContent = `Storage used (this gallery key): ~${mb} MB (LocalStorage limit มัก ~5MB ต่อโดเมน)`;
 }
 
 function getFolderNames() {
@@ -367,17 +396,15 @@ function setActiveTab(tab) {
   $("panelSearch").classList.toggle("hidden", !isSearch);
   $("panelUpload").classList.toggle("hidden", isSearch);
 }
-
 $("tabSearch").addEventListener("click", () => setActiveTab("search"));
 $("tabUpload").addEventListener("click", () => setActiveTab("upload"));
 
 /* =========================
-   Folder selects
+   Folder selects + folder view
 ========================= */
 function refillFolderSelects() {
   const folders = getFolderNames();
 
-  // uploadFolder
   const up = $("uploadFolder");
   up.innerHTML = "";
   folders.forEach(f => {
@@ -387,7 +414,6 @@ function refillFolderSelects() {
   });
   if (!up.value && folders.length) up.value = folders[0];
 
-  // searchFolder
   const sf = $("searchFolder");
   const current = sf.value;
   sf.innerHTML = "";
@@ -406,10 +432,7 @@ function refillFolderSelects() {
   else sf.value="__ALL__";
 }
 
-/* =========================
-   Folder view + actions
-========================= */
-function getFolderCoverImage(folderName){
+function getFolderCover(folderName){
   const imgs = state.folders[folderName] || [];
   if (!imgs.length) return null;
   let newest = imgs[0];
@@ -431,7 +454,7 @@ function renderFolders(){
 
   for (const f of folders) {
     const count = (state.folders[f] || []).length;
-    const cover = getFolderCoverImage(f);
+    const cover = getFolderCover(f);
 
     const card = document.createElement("div");
     card.className = "folderCard";
@@ -450,24 +473,40 @@ function renderFolders(){
     }
 
     const meta = document.createElement("div");
-    meta.className="folderMeta";
+    meta.className = "folderMeta";
 
-    const name=document.createElement("div");
-    name.className="folderName";
-    name.textContent=f;
-    name.title=f;
+    const name = document.createElement("div");
+    name.className = "folderName";
+    name.textContent = f;
+    name.title = f;
 
-    const badge=document.createElement("div");
-    badge.className="folderCount";
-    badge.textContent=`${count} photos`;
+    const right = document.createElement("div");
+    right.className = "folderRight";
+
+    const badge = document.createElement("div");
+    badge.className = "folderCount";
+    badge.textContent = `${count}`;
+
+    const del = document.createElement("button");
+    del.className = "danger";
+    del.style.padding = "8px 10px";
+    del.style.borderRadius = "12px";
+    del.style.fontSize = "12px";
+    del.textContent = "Delete";
+    del.addEventListener("click", (e) => {
+      e.stopPropagation();
+      deleteFolder(f);
+    });
+
+    right.appendChild(badge);
+    right.appendChild(del);
 
     meta.appendChild(name);
-    meta.appendChild(badge);
+    meta.appendChild(right);
 
     card.appendChild(thumb);
     card.appendChild(meta);
 
-    // click -> open that folder in gallery (Search mode)
     card.addEventListener("click", () => {
       $("searchFolder").value = f;
       $("searchText").value = "";
@@ -477,41 +516,11 @@ function renderFolders(){
       window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
     });
 
-    // right click / long press is not consistent; we add delete button via confirm from prompt:
-    card.addEventListener("contextmenu", (e) => {
-      e.preventDefault();
-      deleteFolderUI(f);
-    });
-
-    // small delete button on meta (tap-friendly)
-    const delBtn = document.createElement("button");
-    delBtn.className = "danger";
-    delBtn.style.padding = "8px 10px";
-    delBtn.style.borderRadius = "12px";
-    delBtn.style.fontSize = "12px";
-    delBtn.textContent = "Delete";
-    delBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      deleteFolderUI(f);
-    });
-
-    // add delete button next to count (replace badge area)
-    meta.removeChild(badge);
-    const rightWrap=document.createElement("div");
-    rightWrap.style.display="flex";
-    rightWrap.style.gap="8px";
-    const badge2=document.createElement("div");
-    badge2.className="folderCount";
-    badge2.textContent=`${count}`;
-    rightWrap.appendChild(badge2);
-    rightWrap.appendChild(delBtn);
-    meta.appendChild(rightWrap);
-
     grid.appendChild(card);
   }
 }
 
-function deleteFolderUI(folder){
+function deleteFolder(folder){
   if (folder === "Default") {
     alert('ไม่อนุญาตให้ลบโฟลเดอร์ "Default"');
     return;
@@ -522,6 +531,7 @@ function deleteFolderUI(folder){
   refillFolderSelects();
   renderFolders();
   renderGallery();
+  setStatus(`ลบโฟลเดอร์ "${folder}" แล้ว`, "ok");
 }
 
 /* =========================
@@ -529,89 +539,131 @@ function deleteFolderUI(folder){
 ========================= */
 $("btnCreateFolder").addEventListener("click", () => {
   const name = sanitizeFolderName($("newFolderName").value);
-  if (!name) { $("createMsg").textContent = "กรุณาใส่ชื่อโฟลเดอร์"; return; }
-  if (state.folders[name]) { $("createMsg").textContent = "มีโฟลเดอร์นี้อยู่แล้ว"; return; }
+  if (!name) return setStatus("กรุณาใส่ชื่อโฟลเดอร์", "err");
+  if (state.folders[name]) return setStatus("มีโฟลเดอร์นี้อยู่แล้ว", "err");
 
   state.folders[name] = [];
   saveState();
   $("newFolderName").value = "";
-  $("createMsg").textContent = `สร้างโฟลเดอร์สำเร็จ: ${name}`;
   refillFolderSelects();
   renderFolders();
-  setActiveTab("upload");
-  $("uploadFolder").value = name;
+  setStatus(`สร้างโฟลเดอร์สำเร็จ: ${name}`, "ok");
 });
 
 /* =========================
-   Upload
+   Image processing (compress)
+   - reduces LocalStorage pressure
 ========================= */
 function readFileAsDataURL(file) {
   return new Promise((resolve, reject) => {
     const r = new FileReader();
     r.onload = () => resolve(r.result);
-    r.onerror = reject;
+    r.onerror = () => reject(new Error("FileReader failed"));
     r.readAsDataURL(file);
   });
 }
 
-async function uploadFiles(files) {
-  const folder = $("uploadFolder").value || "Default";
-  if (!state.folders[folder]) state.folders[folder] = [];
+async function compressDataUrl(dataUrl, maxW=1600, maxH=1600, quality=0.82) {
+  // If browser can't use canvas for some reason, return original
+  try {
+    const img = new Image();
+    img.decoding = "async";
+    img.src = dataUrl;
+    await new Promise((res, rej) => { img.onload = res; img.onerror = () => rej(new Error("Image load failed")); });
 
-  const tagList = normalizeTags($("uploadTags").value);
-  const validFiles = [...files].filter(f => f && f.type && f.type.startsWith("image/"));
+    let { width:w, height:h } = img;
+    const scale = Math.min(maxW / w, maxH / h, 1);
+    const nw = Math.round(w * scale);
+    const nh = Math.round(h * scale);
 
-  if (!validFiles.length) { $("uploadMsg").textContent = "ไม่พบไฟล์รูปภาพ"; return; }
+    const canvas = document.createElement("canvas");
+    canvas.width = nw;
+    canvas.height = nh;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0, nw, nh);
 
-  $("uploadMsg").textContent = `กำลังอัปโหลด ${validFiles.length} ไฟล์...`;
-
-  for (const file of validFiles) {
-    const dataUrl = await readFileAsDataURL(file);
-    state.folders[folder].push({
-      id: uid(),
-      name: file.name || "image",
-      dataUrl,
-      tags: tagList,
-      createdAt: Date.now()
-    });
+    // try jpeg for size
+    const out = canvas.toDataURL("image/jpeg", quality);
+    return out;
+  } catch {
+    return dataUrl;
   }
-
-  saveState();
-  $("uploadMsg").textContent = `อัปโหลดสำเร็จ: ${validFiles.length} ไฟล์ → ${folder}`;
-  renderFolders();
-  renderGallery();
 }
 
+/* =========================
+   Upload handling
+========================= */
+async function uploadFiles(files) {
+  try {
+    const folder = $("uploadFolder").value || "Default";
+    if (!state.folders[folder]) state.folders[folder] = [];
+
+    const tagList = normalizeTags($("uploadTags").value);
+    const arr = [...files].filter(f => f && f.type && f.type.startsWith("image/"));
+    if (!arr.length) return setStatus("ไม่พบไฟล์รูปภาพ", "err");
+
+    setStatus(`กำลังอัปโหลด ${arr.length} ไฟล์...`);
+
+    for (const file of arr) {
+      const raw = await readFileAsDataURL(file);
+      const compact = await compressDataUrl(raw);
+
+      // store
+      state.folders[folder].push({
+        id: uid(),
+        name: file.name || "image",
+        dataUrl: compact,
+        tags: tagList,
+        createdAt: Date.now()
+      });
+
+      // save per image so you don't lose everything on quota error
+      try {
+        saveState();
+      } catch (e) {
+        // Quota exceeded
+        // rollback last push
+        state.folders[folder].pop();
+        throw new Error("Storage เต็ม (LocalStorage quota exceeded). ลองอัปโหลดรูปขนาดเล็กลง หรือ Reset All");
+      }
+    }
+
+    refillFolderSelects();
+    renderFolders();
+    renderGallery();
+    setStatus(`อัปโหลดสำเร็จ: ${arr.length} ไฟล์ → ${folder}`, "ok");
+  } catch (e) {
+    setStatus(`อัปโหลดไม่สำเร็จ: ${e.message || e}`, "err");
+  }
+}
+
+/* Choose button + file input */
 $("btnChoose").addEventListener("click", () => {
   const fi = $("fileInput");
-  fi.value = ""; // reset
+  fi.value = ""; // reset so same file can be chosen again
   fi.click();
 });
-
 $("fileInput").addEventListener("change", (e) => {
   if (e.target.files && e.target.files.length) uploadFiles(e.target.files);
 });
 
+/* Drag & Drop (desktop) */
 const dz = $("dropzone");
 dz.addEventListener("dragover", (e) => { e.preventDefault(); dz.classList.add("drag"); });
 dz.addEventListener("dragleave", () => dz.classList.remove("drag"));
 dz.addEventListener("drop", (e) => {
   e.preventDefault();
   dz.classList.remove("drag");
-  if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) {
-    uploadFiles(e.dataTransfer.files);
-  }
+  if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) uploadFiles(e.dataTransfer.files);
 });
 
 /* =========================
-   Search + Gallery
+   Search + Gallery + delete image
 ========================= */
 function getAllImages() {
   const out = [];
   for (const folder of getFolderNames()) {
-    for (const img of (state.folders[folder] || [])) {
-      out.push({ ...img, folder });
-    }
+    for (const img of (state.folders[folder] || [])) out.push({ ...img, folder });
   }
   out.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
   return out;
@@ -624,12 +676,10 @@ function applyFilters(images) {
 
   return images.filter(img => {
     if (folder !== "__ALL__" && img.folder !== folder) return false;
-
     if (text) {
       const name = (img.name || "").toLowerCase();
       if (!name.includes(text)) return false;
     }
-
     if (tags.length) {
       const imgTags = (img.tags || []).map(t => String(t).toLowerCase());
       for (const t of tags) if (!imgTags.includes(t)) return false;
@@ -644,23 +694,23 @@ function deleteImage(folder, id) {
   saveState();
   renderFolders();
   renderGallery();
+  setStatus("ลบรูปแล้ว", "ok");
 }
 
 function renderGallery() {
   const gallery = $("gallery");
-  const emptyState = $("emptyState");
+  const empty = $("emptyState");
   const all = getAllImages();
   const filtered = applyFilters(all);
 
   gallery.innerHTML = "";
 
   if (!filtered.length) {
-    emptyState.style.display = "block";
+    empty.style.display = "block";
     $("resultInfo").textContent = all.length ? "ไม่พบรูปตามเงื่อนไข" : "—";
     return;
   }
-
-  emptyState.style.display = "none";
+  empty.style.display = "none";
   $("resultInfo").textContent = `แสดง ${filtered.length} จากทั้งหมด ${all.length} รูป`;
 
   for (const img of filtered) {
@@ -715,7 +765,6 @@ function renderGallery() {
     dl.textContent = "Download";
 
     const del = document.createElement("button");
-    del.className = "danger";
     del.textContent = "Delete";
     del.addEventListener("click", () => deleteImage(img.folder, img.id));
 
@@ -732,45 +781,48 @@ function renderGallery() {
   }
 }
 
+/* Search events */
 $("searchFolder").addEventListener("change", renderGallery);
 $("searchText").addEventListener("input", renderGallery);
 $("searchTags").addEventListener("input", renderGallery);
-
 $("btnClearSearch").addEventListener("click", () => {
   $("searchFolder").value="__ALL__";
   $("searchText").value="";
   $("searchTags").value="";
   renderGallery();
+  setStatus("ล้างฟิลเตอร์แล้ว", "ok");
 });
 
+/* Buttons */
 $("btnShowAll").addEventListener("click", () => {
   $("searchFolder").value="__ALL__";
   $("searchText").value="";
   $("searchTags").value="";
   setActiveTab("search");
   renderGallery();
-  window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+  setStatus("แสดงรูปทั้งหมดแล้ว", "ok");
 });
 
 $("btnResetAll").addEventListener("click", () => {
   if (!confirm("ลบข้อมูลทั้งหมด (โฟลเดอร์+รูป) ในเครื่องนี้?")) return;
   localStorage.removeItem(STORAGE_KEY);
-  state = loadState();
+  state = { folders: { "Default": [] } };
+  saveState();
   refillFolderSelects();
   renderFolders();
   renderGallery();
+  setStatus("รีเซ็ตเรียบร้อย", "ok");
 });
 
-/* =========================
-   Init
-========================= */
-function init() {
+/* Init */
+(function init(){
+  updateStorageInfo();
   refillFolderSelects();
-  setActiveTab("search");
   renderFolders();
   renderGallery();
-}
-init();
+  setActiveTab("search");
+  setStatus("พร้อมใช้งาน (ถ้าอัปโหลดไม่ผ่าน ดูข้อความใน Status ได้เลย)", "ok");
+})();
 </script>
 </body>
 </html>
