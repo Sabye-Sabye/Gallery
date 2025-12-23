@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Pastel Gallery</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
 :root{
@@ -12,218 +12,765 @@
   --text:#334155;
   --muted:#94a3b8;
   --line:#e5e7eb;
+
   --blue:#93c5fd;
   --pink:#fbcfe8;
+
+  --blue2:#e0f2fe;
+  --pink2:#fdf2f8;
+
   --radius:18px;
+  --shadow: 0 10px 25px rgba(15, 23, 42, .08);
 }
+
 *{box-sizing:border-box}
 body{
   margin:0;
-  font-family:system-ui,-apple-system;
+  font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial;
   background:
-    radial-gradient(800px 400px at 10% 10%, #fde7f3, transparent),
-    radial-gradient(700px 400px at 90% 20%, #e0f2fe, transparent),
+    radial-gradient(900px 450px at 12% 12%, #fde7f3, transparent 60%),
+    radial-gradient(900px 450px at 88% 20%, #e0f2fe, transparent 60%),
     var(--bg);
   color:var(--text);
 }
+
 .container{max-width:1100px;margin:24px auto;padding:0 16px}
-h1{margin:0}
+h1{margin:0;font-size:28px}
+h2{margin:0 0 10px;font-size:16px}
+.muted{color:var(--muted)}
+.small{font-size:12px}
+
+.header{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  gap:12px;flex-wrap:wrap;margin-bottom:10px
+}
+
+.tabs{display:flex;gap:8px}
+.tab{
+  user-select:none;
+  padding:10px 18px;border-radius:999px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.8);
+  cursor:pointer;font-weight:800;
+}
+.tab.active{
+  border:none;
+  background: linear-gradient(135deg, var(--blue), var(--pink));
+}
+
 .card{
   background:var(--card);
+  border:1px solid rgba(148,163,184,.25);
   border-radius:var(--radius);
   padding:16px;
-  margin:16px 0;
-  box-shadow:0 10px 25px rgba(0,0,0,.06);
+  box-shadow:var(--shadow);
+  margin:14px 0;
 }
-.row{display:flex;gap:10px;flex-wrap:wrap}
+
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:end}
+.field{display:flex;flex-direction:column;gap:6px;min-width:220px}
+.field.grow{flex:1;min-width:260px}
+label{font-size:12px;color:var(--muted)}
+
 input,select{
-  padding:12px;border-radius:14px;border:1px solid var(--line);
+  padding:12px 14px;border-radius:14px;
+  border:1px solid var(--line);
+  background:#fff;
+  font-size:14px;
 }
+
 button{
   padding:12px 16px;border-radius:14px;border:none;
-  background:linear-gradient(135deg,var(--blue),var(--pink));
-  font-weight:700;cursor:pointer;
+  background: linear-gradient(135deg, var(--blue), var(--pink));
+  font-weight:900;cursor:pointer;
 }
-button.secondary{background:#f1f5f9}
+button.secondary{
+  background:#f1f5f9;border:1px solid var(--line);
+}
+button.danger{
+  background: #fecaca; border:1px solid #fca5a5;
+}
 
-.foldersGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
-.folderCard{border:1px solid var(--line);border-radius:16px;overflow:hidden}
-.folderThumb{height:140px;background:#f1f5f9;display:flex;align-items:center;justify-content:center}
-.folderThumb img{width:100%;height:100%;object-fit:cover}
-.folderMeta{padding:12px;font-weight:700;display:flex;justify-content:space-between}
+.panel.hidden{display:none}
 
+/* Folder view cards */
+.foldersGrid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:14px;
+}
+.folderCard{
+  border-radius:16px;
+  overflow:hidden;
+  background:#fff;
+  border:1px solid var(--line);
+  cursor:pointer;
+  transition:transform .08s ease;
+}
+.folderCard:hover{transform:scale(1.01)}
+.folderThumb{
+  height:140px;
+  background:linear-gradient(135deg, var(--pink2), var(--blue2));
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+}
+.folderThumb img{width:100%;height:100%;object-fit:cover;display:block}
+.folderThumb .ph{color:var(--muted);font-weight:900}
+.folderMeta{
+  padding:12px;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+}
+.folderName{font-weight:900;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.folderCount{
+  font-size:12px;color:var(--muted);
+  padding:4px 10px;border-radius:999px;border:1px solid var(--line);
+  background:#f8fafc;
+}
+
+.folderActions{
+  display:flex;gap:8px;flex-wrap:wrap;
+  margin-top:10px;
+}
+
+/* Dropzone */
 .dropzone{
-  border:2px dashed #c7d2fe;
+  margin-top:12px;
+  padding:22px;
   border-radius:18px;
-  padding:24px;
+  border:2px dashed #c7d2fe;
   text-align:center;
-  background:#fdf2f8;
+  background: var(--pink2);
 }
-.dropzone.drag{background:#e0f2fe}
+.dropzone.drag{
+  background: var(--blue2);
+  border-color: #93c5fd;
+}
 
-.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
-.thumb{border:1px solid var(--line);border-radius:16px;overflow:hidden}
-.thumb img{width:100%;height:160px;object-fit:cover}
-.meta{padding:12px}
+/* Gallery */
+.galleryHeader{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+}
+.gallery{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:14px;margin-top:12px;
+}
+.thumb{
+  border-radius:16px;
+  overflow:hidden;
+  background:#fff;
+  border:1px solid var(--line);
+}
+.thumb img{width:100%;height:160px;object-fit:cover;display:block}
+.meta{padding:12px;display:flex;flex-direction:column;gap:8px}
+.metaTop{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.fileName{font-weight:900;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.badge{
+  font-size:11px;
+  padding:4px 10px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:#f8fafc;
+  color:var(--muted);
+  white-space:nowrap;
+}
+.tags{display:flex;gap:6px;flex-wrap:wrap}
+.tag{
+  font-size:11px;padding:4px 10px;border-radius:999px;
+  background: var(--blue2);
+  border:1px solid rgba(147,197,253,.5);
+}
+.actions{display:flex;gap:8px}
+.actions a, .actions button{
+  flex:1;
+  text-align:center;
+  padding:10px;
+  border-radius:12px;
+  border:1px solid var(--line);
+  background:#f8fafc;
+  color:#334155;
+  font-weight:900;
+  text-decoration:none;
+}
+.actions button{cursor:pointer}
 </style>
 </head>
 
 <body>
 <div class="container">
 
-<h1>🌸 Pastel Gallery</h1>
+  <header class="header">
+    <div>
+      <h1>🌸 Pastel Gallery</h1>
+      <div class="muted small">Folder View • Upload • Search/Tag • Delete folder/image • LocalStorage</div>
+    </div>
 
-<!-- Folder View -->
-<div class="card">
-  <h2>Folders</h2>
-  <div id="foldersGrid" class="foldersGrid"></div>
-</div>
+    <div class="tabs">
+      <div class="tab active" id="tabSearch" role="button" tabindex="0">Search</div>
+      <div class="tab" id="tabUpload" role="button" tabindex="0">Upload</div>
+    </div>
+  </header>
 
-<!-- Upload -->
-<div class="card">
-  <div class="row">
-    <select id="uploadFolder"></select>
-    <input id="uploadTags" placeholder="tags (optional)">
-    <button class="secondary" id="btnChoose">Choose images</button>
-    <input type="file" id="fileInput" accept="image/*" multiple hidden>
-  </div>
-  <div id="dropzone" class="dropzone">Drag & Drop images here</div>
-</div>
+  <!-- Folder View (Home) -->
+  <section class="card" id="folderViewCard">
+    <div class="galleryHeader">
+      <h2>Folders</h2>
+      <div class="folderActions">
+        <button class="secondary" id="btnShowAll">Show All Gallery</button>
+        <button class="danger" id="btnResetAll" title="ลบข้อมูลทั้งหมดในเครื่องนี้">Reset All</button>
+      </div>
+    </div>
+    <div id="foldersGrid" class="foldersGrid"></div>
+    <div id="foldersEmpty" class="muted">ยังไม่มีโฟลเดอร์ — ไปที่แท็บ Upload เพื่อสร้างโฟลเดอร์</div>
+  </section>
 
-<!-- Gallery -->
-<div class="card">
-  <h2>Gallery</h2>
-  <div id="gallery" class="gallery"></div>
-</div>
+  <!-- Search Tab -->
+  <section class="panel" id="panelSearch">
+    <div class="card">
+      <h2>ค้นหา / ฟิลเตอร์</h2>
+      <div class="row">
+        <div class="field">
+          <label>Folder</label>
+          <select id="searchFolder"></select>
+        </div>
+        <div class="field grow">
+          <label>Search (ชื่อไฟล์)</label>
+          <input id="searchText" placeholder="เช่น trip, dc2, run..." />
+        </div>
+        <div class="field grow">
+          <label>Tags (คั่นด้วย , )</label>
+          <input id="searchTags" placeholder="hokkaido, snow, dc2" />
+        </div>
+        <div class="field">
+          <label>&nbsp;</label>
+          <button class="secondary" id="btnClearSearch">Clear</button>
+        </div>
+      </div>
+      <div class="muted small" id="resultInfo">—</div>
+    </div>
+  </section>
+
+  <!-- Upload Tab -->
+  <section class="panel hidden" id="panelUpload">
+    <div class="card">
+      <h2>สร้างโฟลเดอร์</h2>
+      <div class="row">
+        <div class="field grow">
+          <label>New folder name</label>
+          <input id="newFolderName" placeholder="เช่น Trip-Hokkaido / DC2 / Running" />
+        </div>
+        <div class="field">
+          <label>&nbsp;</label>
+          <button id="btnCreateFolder">Create</button>
+        </div>
+      </div>
+      <div class="muted small" id="createMsg">—</div>
+    </div>
+
+    <div class="card">
+      <h2>อัปโหลดรูป</h2>
+      <div class="row">
+        <div class="field">
+          <label>Upload folder</label>
+          <select id="uploadFolder"></select>
+        </div>
+        <div class="field grow">
+          <label>Tags (ใช้กับรูปที่อัปโหลดรอบนี้)</label>
+          <input id="uploadTags" placeholder="invoice, snow, family (คั่นด้วย , )" />
+        </div>
+        <div class="field">
+          <label>&nbsp;</label>
+          <button class="secondary" id="btnChoose">Choose images</button>
+          <input type="file" id="fileInput" accept="image/*" multiple hidden />
+        </div>
+      </div>
+
+      <div id="dropzone" class="dropzone">
+        <div style="font-weight:900">ลากไฟล์รูปมาวางที่นี่ (Drag & Drop)</div>
+        <div class="muted small">บน iPhone แนะนำใช้ Choose images</div>
+      </div>
+
+      <div class="muted small" id="uploadMsg">—</div>
+    </div>
+  </section>
+
+  <!-- Gallery -->
+  <section class="card">
+    <div class="galleryHeader">
+      <h2>Gallery</h2>
+      <div class="muted small" id="galleryHint">คลิกโฟลเดอร์เพื่อดูรูปเฉพาะโฟลเดอร์ • หรือ Show All</div>
+    </div>
+    <div id="gallery" class="gallery"></div>
+    <div id="emptyState" class="muted">ยังไม่มีรูป — ไปที่แท็บ Upload เพื่อเพิ่มรูป</div>
+  </section>
 
 </div>
 
 <script>
-const KEY="pastel_gallery_fixed";
-const $=id=>document.getElementById(id);
+/* =========================
+   Storage + Helpers
+========================= */
+const STORAGE_KEY = "pastel_gallery_v3";
+const $ = (id) => document.getElementById(id);
 
-/* ---------- STATE ---------- */
-let state = JSON.parse(localStorage.getItem(KEY));
-if(!state || !state.folders){
-  state={folders:{Default:[]}};
-  save();
+function uid() {
+  return Date.now().toString(16) + "_" + Math.random().toString(16).slice(2);
 }
 
-function save(){
-  localStorage.setItem(KEY,JSON.stringify(state));
+function normalizeTags(str) {
+  return String(str || "")
+    .split(",")
+    .map(t => t.trim())
+    .filter(Boolean)
+    .map(t => t.toLowerCase());
 }
 
-function uid(){
-  return Date.now()+"_"+Math.random().toString(16).slice(2);
+function sanitizeFolderName(name) {
+  return String(name || "")
+    .trim()
+    .replace(/[\/\\]/g, "-")
+    .replace(/(\.\.)/g, "")
+    .replace(/[^\wก-๙\s.-]/g, "")
+    .trim();
 }
 
-function ensureFolder(name){
-  if(!state.folders[name]){
-    state.folders[name]=[];
+let state = loadState();
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return { folders: { "Default": [] } };
+    const parsed = JSON.parse(raw);
+    if (!parsed?.folders) return { folders: { "Default": [] } };
+    if (!parsed.folders["Default"]) parsed.folders["Default"] = [];
+    return parsed;
+  } catch {
+    return { folders: { "Default": [] } };
   }
 }
 
-/* ---------- UI ---------- */
-function refreshFolders(){
-  const sel=$("uploadFolder");
-  sel.innerHTML="";
-  Object.keys(state.folders).forEach(f=>{
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function getFolderNames() {
+  return Object.keys(state.folders).sort((a,b)=>a.localeCompare(b));
+}
+
+/* =========================
+   Tabs
+========================= */
+function setActiveTab(tab) {
+  const isSearch = tab === "search";
+  $("tabSearch").classList.toggle("active", isSearch);
+  $("tabUpload").classList.toggle("active", !isSearch);
+  $("panelSearch").classList.toggle("hidden", !isSearch);
+  $("panelUpload").classList.toggle("hidden", isSearch);
+}
+
+$("tabSearch").addEventListener("click", () => setActiveTab("search"));
+$("tabUpload").addEventListener("click", () => setActiveTab("upload"));
+
+/* =========================
+   Folder selects
+========================= */
+function refillFolderSelects() {
+  const folders = getFolderNames();
+
+  // uploadFolder
+  const up = $("uploadFolder");
+  up.innerHTML = "";
+  folders.forEach(f => {
     const o=document.createElement("option");
-    o.value=f;o.textContent=f;
-    sel.appendChild(o);
+    o.value=f; o.textContent=f;
+    up.appendChild(o);
   });
-  if(!sel.value) sel.value="Default";
-  renderFolders();
+  if (!up.value && folders.length) up.value = folders[0];
+
+  // searchFolder
+  const sf = $("searchFolder");
+  const current = sf.value;
+  sf.innerHTML = "";
+  const allOpt = document.createElement("option");
+  allOpt.value="__ALL__";
+  allOpt.textContent="All folders";
+  sf.appendChild(allOpt);
+
+  folders.forEach(f => {
+    const o=document.createElement("option");
+    o.value=f; o.textContent=f;
+    sf.appendChild(o);
+  });
+
+  if ([...sf.options].some(o=>o.value===current)) sf.value=current;
+  else sf.value="__ALL__";
+}
+
+/* =========================
+   Folder view + actions
+========================= */
+function getFolderCoverImage(folderName){
+  const imgs = state.folders[folderName] || [];
+  if (!imgs.length) return null;
+  let newest = imgs[0];
+  for (const x of imgs) if ((x.createdAt||0) > (newest.createdAt||0)) newest = x;
+  return newest.dataUrl || null;
 }
 
 function renderFolders(){
-  const g=$("foldersGrid");
-  g.innerHTML="";
-  Object.entries(state.folders).forEach(([f,imgs])=>{
-    const cover=imgs.slice().sort((a,b)=>b.t-a.t)[0];
-    g.innerHTML+=`
-      <div class="folderCard">
-        <div class="folderThumb">
-          ${cover?`<img src="${cover.src}">`:"No image"}
-        </div>
-        <div class="folderMeta">${f}<span>${imgs.length}</span></div>
-      </div>`;
-  });
-}
+  const grid = $("foldersGrid");
+  const empty = $("foldersEmpty");
+  const folders = getFolderNames();
+  grid.innerHTML = "";
 
-/* ---------- FILE HANDLING ---------- */
-function readFile(file){
-  return new Promise((resolve,reject)=>{
-    const r=new FileReader();
-    r.onload=()=>resolve(r.result);
-    r.onerror=reject;
-    r.readAsDataURL(file);
-  });
-}
-
-async function uploadFiles(fileList){
-  const folder=$("uploadFolder").value || "Default";
-  ensureFolder(folder);
-
-  const tags=$("uploadTags").value
-    .split(",").map(t=>t.trim()).filter(Boolean);
-
-  for(const file of fileList){
-    if(!file.type.startsWith("image/")) continue;
-    const src=await readFile(file);
-    state.folders[folder].push({
-      id:uid(),
-      name:file.name,
-      src,
-      tags,
-      t:Date.now()
-    });
+  if (!folders.length) {
+    empty.style.display = "block";
+    return;
   }
-  save();
+  empty.style.display = "none";
+
+  for (const f of folders) {
+    const count = (state.folders[f] || []).length;
+    const cover = getFolderCoverImage(f);
+
+    const card = document.createElement("div");
+    card.className = "folderCard";
+
+    const thumb = document.createElement("div");
+    thumb.className = "folderThumb";
+    if (cover) {
+      const img=document.createElement("img");
+      img.src=cover; img.alt=f; img.loading="lazy";
+      thumb.appendChild(img);
+    } else {
+      const ph=document.createElement("div");
+      ph.className="ph";
+      ph.textContent="No image";
+      thumb.appendChild(ph);
+    }
+
+    const meta = document.createElement("div");
+    meta.className="folderMeta";
+
+    const name=document.createElement("div");
+    name.className="folderName";
+    name.textContent=f;
+    name.title=f;
+
+    const badge=document.createElement("div");
+    badge.className="folderCount";
+    badge.textContent=`${count} photos`;
+
+    meta.appendChild(name);
+    meta.appendChild(badge);
+
+    card.appendChild(thumb);
+    card.appendChild(meta);
+
+    // click -> open that folder in gallery (Search mode)
+    card.addEventListener("click", () => {
+      $("searchFolder").value = f;
+      $("searchText").value = "";
+      $("searchTags").value = "";
+      setActiveTab("search");
+      renderGallery();
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+    });
+
+    // right click / long press is not consistent; we add delete button via confirm from prompt:
+    card.addEventListener("contextmenu", (e) => {
+      e.preventDefault();
+      deleteFolderUI(f);
+    });
+
+    // small delete button on meta (tap-friendly)
+    const delBtn = document.createElement("button");
+    delBtn.className = "danger";
+    delBtn.style.padding = "8px 10px";
+    delBtn.style.borderRadius = "12px";
+    delBtn.style.fontSize = "12px";
+    delBtn.textContent = "Delete";
+    delBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      deleteFolderUI(f);
+    });
+
+    // add delete button next to count (replace badge area)
+    meta.removeChild(badge);
+    const rightWrap=document.createElement("div");
+    rightWrap.style.display="flex";
+    rightWrap.style.gap="8px";
+    const badge2=document.createElement("div");
+    badge2.className="folderCount";
+    badge2.textContent=`${count}`;
+    rightWrap.appendChild(badge2);
+    rightWrap.appendChild(delBtn);
+    meta.appendChild(rightWrap);
+
+    grid.appendChild(card);
+  }
+}
+
+function deleteFolderUI(folder){
+  if (folder === "Default") {
+    alert('ไม่อนุญาตให้ลบโฟลเดอร์ "Default"');
+    return;
+  }
+  if (!confirm(`ลบโฟลเดอร์ "${folder}" และรูปทั้งหมดในโฟลเดอร์นี้?`)) return;
+  delete state.folders[folder];
+  saveState();
+  refillFolderSelects();
   renderFolders();
   renderGallery();
 }
 
-/* ---------- EVENTS ---------- */
-$("btnChoose").addEventListener("click",()=>{
-  $("fileInput").value="";
-  $("fileInput").click();
+/* =========================
+   Create folder
+========================= */
+$("btnCreateFolder").addEventListener("click", () => {
+  const name = sanitizeFolderName($("newFolderName").value);
+  if (!name) { $("createMsg").textContent = "กรุณาใส่ชื่อโฟลเดอร์"; return; }
+  if (state.folders[name]) { $("createMsg").textContent = "มีโฟลเดอร์นี้อยู่แล้ว"; return; }
+
+  state.folders[name] = [];
+  saveState();
+  $("newFolderName").value = "";
+  $("createMsg").textContent = `สร้างโฟลเดอร์สำเร็จ: ${name}`;
+  refillFolderSelects();
+  renderFolders();
+  setActiveTab("upload");
+  $("uploadFolder").value = name;
 });
 
-$("fileInput").addEventListener("change",e=>{
-  if(e.target.files.length){
-    uploadFiles(e.target.files);
+/* =========================
+   Upload
+========================= */
+function readFileAsDataURL(file) {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(r.result);
+    r.onerror = reject;
+    r.readAsDataURL(file);
+  });
+}
+
+async function uploadFiles(files) {
+  const folder = $("uploadFolder").value || "Default";
+  if (!state.folders[folder]) state.folders[folder] = [];
+
+  const tagList = normalizeTags($("uploadTags").value);
+  const validFiles = [...files].filter(f => f && f.type && f.type.startsWith("image/"));
+
+  if (!validFiles.length) { $("uploadMsg").textContent = "ไม่พบไฟล์รูปภาพ"; return; }
+
+  $("uploadMsg").textContent = `กำลังอัปโหลด ${validFiles.length} ไฟล์...`;
+
+  for (const file of validFiles) {
+    const dataUrl = await readFileAsDataURL(file);
+    state.folders[folder].push({
+      id: uid(),
+      name: file.name || "image",
+      dataUrl,
+      tags: tagList,
+      createdAt: Date.now()
+    });
   }
+
+  saveState();
+  $("uploadMsg").textContent = `อัปโหลดสำเร็จ: ${validFiles.length} ไฟล์ → ${folder}`;
+  renderFolders();
+  renderGallery();
+}
+
+$("btnChoose").addEventListener("click", () => {
+  const fi = $("fileInput");
+  fi.value = ""; // reset
+  fi.click();
 });
 
-const dz=$("dropzone");
-dz.addEventListener("dragover",e=>{
-  e.preventDefault();dz.classList.add("drag");
+$("fileInput").addEventListener("change", (e) => {
+  if (e.target.files && e.target.files.length) uploadFiles(e.target.files);
 });
-dz.addEventListener("dragleave",()=>dz.classList.remove("drag"));
-dz.addEventListener("drop",e=>{
-  e.preventDefault();dz.classList.remove("drag");
-  if(e.dataTransfer.files.length){
+
+const dz = $("dropzone");
+dz.addEventListener("dragover", (e) => { e.preventDefault(); dz.classList.add("drag"); });
+dz.addEventListener("dragleave", () => dz.classList.remove("drag"));
+dz.addEventListener("drop", (e) => {
+  e.preventDefault();
+  dz.classList.remove("drag");
+  if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) {
     uploadFiles(e.dataTransfer.files);
   }
 });
 
-/* ---------- GALLERY ---------- */
-function renderGallery(){
-  const g=$("gallery");
-  g.innerHTML="";
-  Object.values(state.folders).flat().forEach(i=>{
-    g.innerHTML+=`
-      <div class="thumb">
-        <img src="${i.src}">
-        <div class="meta">${i.name}</div>
-      </div>`;
+/* =========================
+   Search + Gallery
+========================= */
+function getAllImages() {
+  const out = [];
+  for (const folder of getFolderNames()) {
+    for (const img of (state.folders[folder] || [])) {
+      out.push({ ...img, folder });
+    }
+  }
+  out.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+  return out;
+}
+
+function applyFilters(images) {
+  const folder = $("searchFolder").value;
+  const text = ($("searchText").value || "").trim().toLowerCase();
+  const tags = normalizeTags($("searchTags").value);
+
+  return images.filter(img => {
+    if (folder !== "__ALL__" && img.folder !== folder) return false;
+
+    if (text) {
+      const name = (img.name || "").toLowerCase();
+      if (!name.includes(text)) return false;
+    }
+
+    if (tags.length) {
+      const imgTags = (img.tags || []).map(t => String(t).toLowerCase());
+      for (const t of tags) if (!imgTags.includes(t)) return false;
+    }
+    return true;
   });
 }
 
-/* ---------- INIT ---------- */
-refreshFolders();
-renderGallery();
+function deleteImage(folder, id) {
+  if (!confirm("ลบรูปนี้ออกจากเครื่องนี้?")) return;
+  state.folders[folder] = (state.folders[folder] || []).filter(x => x.id !== id);
+  saveState();
+  renderFolders();
+  renderGallery();
+}
+
+function renderGallery() {
+  const gallery = $("gallery");
+  const emptyState = $("emptyState");
+  const all = getAllImages();
+  const filtered = applyFilters(all);
+
+  gallery.innerHTML = "";
+
+  if (!filtered.length) {
+    emptyState.style.display = "block";
+    $("resultInfo").textContent = all.length ? "ไม่พบรูปตามเงื่อนไข" : "—";
+    return;
+  }
+
+  emptyState.style.display = "none";
+  $("resultInfo").textContent = `แสดง ${filtered.length} จากทั้งหมด ${all.length} รูป`;
+
+  for (const img of filtered) {
+    const card = document.createElement("div");
+    card.className = "thumb";
+
+    const imageEl = document.createElement("img");
+    imageEl.src = img.dataUrl;
+    imageEl.alt = img.name || "image";
+    imageEl.loading = "lazy";
+
+    const meta = document.createElement("div");
+    meta.className = "meta";
+
+    const top = document.createElement("div");
+    top.className = "metaTop";
+
+    const name = document.createElement("div");
+    name.className = "fileName";
+    name.textContent = img.name || "(no name)";
+    name.title = img.name || "";
+
+    const badge = document.createElement("div");
+    badge.className = "badge";
+    badge.textContent = img.folder;
+
+    top.appendChild(name);
+    top.appendChild(badge);
+
+    const tagsWrap = document.createElement("div");
+    tagsWrap.className = "tags";
+    (img.tags || []).forEach(t => {
+      const tag = document.createElement("span");
+      tag.className = "tag";
+      tag.textContent = t;
+      tag.addEventListener("click", () => {
+        const current = new Set(normalizeTags($("searchTags").value));
+        current.add(String(t).toLowerCase());
+        $("searchTags").value = Array.from(current).join(", ");
+        setActiveTab("search");
+        renderGallery();
+      });
+      tagsWrap.appendChild(tag);
+    });
+
+    const actions = document.createElement("div");
+    actions.className = "actions";
+
+    const dl = document.createElement("a");
+    dl.href = img.dataUrl;
+    dl.download = img.name || "image";
+    dl.textContent = "Download";
+
+    const del = document.createElement("button");
+    del.className = "danger";
+    del.textContent = "Delete";
+    del.addEventListener("click", () => deleteImage(img.folder, img.id));
+
+    actions.appendChild(dl);
+    actions.appendChild(del);
+
+    meta.appendChild(top);
+    if ((img.tags || []).length) meta.appendChild(tagsWrap);
+    meta.appendChild(actions);
+
+    card.appendChild(imageEl);
+    card.appendChild(meta);
+    gallery.appendChild(card);
+  }
+}
+
+$("searchFolder").addEventListener("change", renderGallery);
+$("searchText").addEventListener("input", renderGallery);
+$("searchTags").addEventListener("input", renderGallery);
+
+$("btnClearSearch").addEventListener("click", () => {
+  $("searchFolder").value="__ALL__";
+  $("searchText").value="";
+  $("searchTags").value="";
+  renderGallery();
+});
+
+$("btnShowAll").addEventListener("click", () => {
+  $("searchFolder").value="__ALL__";
+  $("searchText").value="";
+  $("searchTags").value="";
+  setActiveTab("search");
+  renderGallery();
+  window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+});
+
+$("btnResetAll").addEventListener("click", () => {
+  if (!confirm("ลบข้อมูลทั้งหมด (โฟลเดอร์+รูป) ในเครื่องนี้?")) return;
+  localStorage.removeItem(STORAGE_KEY);
+  state = loadState();
+  refillFolderSelects();
+  renderFolders();
+  renderGallery();
+});
+
+/* =========================
+   Init
+========================= */
+function init() {
+  refillFolderSelects();
+  setActiveTab("search");
+  renderFolders();
+  renderGallery();
+}
+init();
 </script>
 </body>
 </html>
