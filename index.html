@@ -1,41 +1,120 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <title>Image Gallery</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gallery</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <div class="container">
+    <header class="header">
+      <div>
+        <h1>📸 My Gallery</h1>
+        <div class="muted">GitHub Pages • LocalStorage • Folder + Drag&Drop + Search/Tag</div>
+      </div>
 
-<div class="container">
-  <h1>📁 Image Gallery</h1>
+      <div class="tabs">
+        <button class="tab active" id="tabSearch" type="button">Search</button>
+        <button class="tab" id="tabUpload" type="button">Upload</button>
+      </div>
+    </header>
 
-  <!-- Create folder -->
-  <div class="card">
-    <h2>1) สร้างโฟลเดอร์</h2>
-    <input id="folderName" placeholder="ชื่อโฟลเดอร์">
-    <button onclick="createFolder()">Create</button>
+    <!-- SEARCH TAB -->
+    <section class="panel" id="panelSearch">
+      <div class="card">
+        <h2>ค้นหา / ฟิลเตอร์</h2>
+
+        <div class="row">
+          <div class="field">
+            <label>โฟลเดอร์</label>
+            <select id="searchFolder"></select>
+          </div>
+
+          <div class="field grow">
+            <label>Search (ชื่อไฟล์)</label>
+            <input id="searchText" placeholder="พิมพ์คำค้น เช่น trip, dc2, run..." />
+          </div>
+
+          <div class="field grow">
+            <label>Tag (คั่นด้วย , )</label>
+            <input id="searchTags" placeholder="เช่น hokkaido, snow, dc2" />
+          </div>
+
+          <div class="field">
+            <label>&nbsp;</label>
+            <button id="btnClearSearch" class="secondary" type="button">Clear</button>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="muted small" id="resultInfo">—</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- UPLOAD TAB -->
+    <section class="panel hidden" id="panelUpload">
+      <div class="card">
+        <h2>1) สร้างโฟลเดอร์</h2>
+        <div class="row">
+          <input id="newFolderName" placeholder="เช่น Trip-Hokkaido / DC2 / Running" />
+          <button id="btnCreateFolder" type="button">Create</button>
+          <div class="muted small" id="createMsg"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>2) เลือกโฟลเดอร์ + ใส่ Tag + อัปโหลด</h2>
+
+        <div class="row">
+          <div class="field">
+            <label>Upload folder</label>
+            <select id="uploadFolder"></select>
+          </div>
+
+          <div class="field grow">
+            <label>Tags (ใช้กับรูปที่อัปโหลดรอบนี้)</label>
+            <input id="uploadTags" placeholder="เช่น invoice, snow, family (คั่นด้วย , )" />
+          </div>
+
+          <div class="field">
+            <label>&nbsp;</label>
+            <button id="btnPickFiles" class="secondary" type="button">Choose files</button>
+            <input id="fileInput" type="file" accept="image/*" multiple hidden />
+          </div>
+        </div>
+
+        <div id="dropzone" class="dropzone" aria-label="Dropzone">
+          <div class="dzTitle">ลากไฟล์รูปมาวางที่นี่ (Drag & Drop)</div>
+          <div class="muted small">รองรับ png / jpg / webp / gif • เก็บใน LocalStorage</div>
+        </div>
+
+        <div class="row">
+          <div class="muted small" id="uploadMsg">—</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- GALLERY (Shared) -->
+    <section class="card">
+      <div class="galleryHeader">
+        <h2>Gallery</h2>
+        <div class="galleryActions">
+          <button id="btnShowAll" class="secondary" type="button">Show All</button>
+          <button id="btnResetDemo" class="danger" type="button" title="ลบข้อมูลทั้งหมดในเครื่องนี้">Reset (Clear All)</button>
+        </div>
+      </div>
+
+      <div id="gallery" class="gallery"></div>
+      <div id="emptyState" class="muted">ยังไม่มีรูป — ไปที่แท็บ Upload เพื่อเพิ่มรูป</div>
+    </section>
+
+    <footer class="muted small">
+      * ข้อมูลถูกเก็บในเบราว์เซอร์เครื่องนี้ (LocalStorage) ไม่ได้เก็บบน GitHub
+    </footer>
   </div>
 
-  <!-- Upload -->
-  <div class="card">
-    <h2>2) อัปโหลดรูป</h2>
-    <select id="uploadFolder"></select>
-    <input type="file" multiple accept="image/*" onchange="uploadImages(event)">
-  </div>
-
-  <!-- Filter -->
-  <div class="card">
-    <h2>3) เลือกโฟลเดอร์</h2>
-    <select id="filterFolder" onchange="renderGallery()"></select>
-    <button onclick="downloadAll()">Download All (ZIP)</button>
-  </div>
-
-  <!-- Gallery -->
-  <div class="gallery" id="gallery"></div>
-</div>
-
-<script src="app.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
